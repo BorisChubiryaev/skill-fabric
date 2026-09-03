@@ -100,6 +100,21 @@ class PureLogicTests(unittest.TestCase):
         self.assertEqual(out.shape, (400, 600))
         self.assertIn("upscale x2", meta["steps"])
 
+    def test_photo_pipeline_normalizes_illumination(self) -> None:
+        # Фото-ветка должна включать нормализацию освещённости (фикс виньетки).
+        tmp = tempfile.mkdtemp()
+        p = os.path.join(tmp, "s.png")
+        _make_image(p, LINES)
+        _, meta = m.preprocess(cv2.imread(p), "photo")
+        self.assertIn("illumination", meta["steps"])
+
+    def test_configure_tesseract_finds_binary_on_path(self) -> None:
+        # Если tesseract на PATH, автопоиск должен его вернуть.
+        import shutil
+        if not shutil.which("tesseract"):
+            self.skipTest("tesseract не на PATH")
+        self.assertIsNotNone(m._configure_tesseract())
+
 
 @unittest.skipUnless(READY, "tesseract с rus+eng недоступен")
 class EngineTests(unittest.TestCase):

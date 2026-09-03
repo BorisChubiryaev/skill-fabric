@@ -22,13 +22,18 @@
 
 ## Требования
 
-- бинарь `tesseract` + языковые пакеты: `apt-get install tesseract-ocr
-  tesseract-ocr-rus tesseract-ocr-eng`;
-- Python 3.11+ и пакеты: `pip install pytesseract pillow numpy
-  opencv-python-headless pymupdf python-docx`;
+- бинарь `tesseract` + языковые пакеты `rus`, `eng`;
+- Python 3.11+ и пакеты: `pytesseract pillow numpy opencv-python-headless pymupdf
+  python-docx`;
 - рендерер DOCX (Word/LibreOffice) — необязательно, только чтобы открыть результат.
 
-Сеть при работе и платные API не нужны.
+Установка зависит от машины (`apt` на Linux, `brew install tesseract
+tesseract-lang` на macOS, а **без sudo/Homebrew** — Miniforge + conda-forge +
+`uv run`). Полные рецепты, включая обход блокировки `curl`, — в
+`references/install.md`. Команда `check` подскажет, чего не хватает; скрипт сам
+находит бинарь в conda/miniforge/brew или принимает путь через `--tesseract-cmd`.
+
+Сеть при работе и платные API не нужны (сеть нужна один раз — только на установку).
 
 ## Установка из ZIP
 

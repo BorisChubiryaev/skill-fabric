@@ -5,6 +5,13 @@ description: Use whenever a coding agent needs to extract text from images, scan
 
 # Профессиональный офлайн-OCR → редактируемый Word
 
+## Язык общения
+
+Всё общение с пользователем веди **по-русски**: пояснения, статусы, вопросы,
+итоговый ответ, комментарии к шагам. Пользователь работает на русском, и
+англоязычные вставки в диалоге сбивают. Технические команды, пути и имена флагов,
+разумеется, остаются как есть.
+
 ## Назначение
 
 Извлекай текст из изображений, сканов PDF и фотографий документов и собирай
@@ -51,11 +58,29 @@ Tesseract — сильный офлайн-движок, но у него ест�
    python3 "$SKILL_ROOT/scripts/ocr_to_word.py" check --lang rus+eng
    ```
 
-   Если `ready` не `true`, установи недостающее и повтори. Обычно нужно:
-   `apt-get install tesseract-ocr tesseract-ocr-rus tesseract-ocr-eng` и
-   `pip install pytesseract pillow numpy opencv-python-headless pymupdf python-docx`.
-   Команда сама подскажет, чего не хватает. Не запускай `ocr` вслепую, если
-   `check` не прошёл, — получишь пустой или неверный результат.
+   Если `ready` не `true`, подними окружение и повтори. Выбор пути зависит от
+   того, что доступно на машине, — не ставь всё подряд:
+
+   - **Linux (есть apt/sudo):** `apt-get install tesseract-ocr
+     tesseract-ocr-rus tesseract-ocr-eng` + `pip install pytesseract pillow
+     numpy opencv-python-headless pymupdf python-docx`.
+   - **macOS с Homebrew:** `brew install tesseract tesseract-lang` + те же
+     pip-пакеты.
+   - **Без sudo и без Homebrew (частый случай на «голом» Mac, в т.ч. GigaCode
+     Desktop):** поставь Tesseract из **conda-forge через Miniforge** в домашний
+     каталог и запускай скрипт через **uv** — ничего не устанавливая глобально.
+     Точные шаги, включая обход блокировки `curl` (скачивание через Python) и
+     нужные переменные `PATH`/`TESSDATA_PREFIX`/`UV_DEFAULT_INDEX`, описаны в
+     `references/install.md`. Прочитай его целиком перед установкой.
+
+   Скрипт сам ищет бинарь `tesseract` не только на `PATH`, но и в типичных местах
+   без sudo (`~/miniforge3/bin`, `~/miniconda3/bin`, `/opt/homebrew/bin`,
+   `/usr/local/bin`) и подхватывает соседний `share/tessdata`. Если бинарь лежит
+   в нестандартном месте — передай путь флагом `--tesseract-cmd`. Вывод `check`
+   в поле `tesseract_cmd` показывает, какой бинарь выбран.
+
+   Не запускай `ocr` вслепую, если `check` не прошёл, — получишь пустой или
+   неверный результат.
 
 ## Обязательный процесс
 

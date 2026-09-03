@@ -75,12 +75,65 @@ def _emit(payload: dict[str, Any], ok: bool) -> int:
     return 0 if ok else 1
 
 
+def _configure_tesseract(cmd: str | None = None) -> str | None:
+    """Находит бинарь `tesseract` и настраивает pytesseract на его использование.
+    Возвращает найденный путь или None.
+
+    Порядок поиска: явный `--tesseract-cmd`; затем PATH; затем типичные места
+    установки БЕЗ sudo и Homebrew — прежде всего conda/miniforge (именно так
+    ставится tesseract на «голом» Mac). Заодно выставляет `TESSDATA_PREFIX`,
+    если языковые данные лежат рядом с бинарём (conda/brew кладут их в
+    ../share/tessdata), чтобы движок нашёл rus/eng без ручной настройки."""
+    import shutil
+
+    candidates: list[str] = []
+    if cmd:
+        candidates.append(cmd)
+    onpath = shutil.which("tesseract")
+    if onpath:
+        candidates.append(onpath)
+    home = os.path.expanduser("~")
+    candidates += [
+        os.path.join(home, "miniforge3", "bin", "tesseract"),
+        os.path.join(home, "miniconda3", "bin", "tesseract"),
+        os.path.join(home, "anaconda3", "bin", "tesseract"),
+        "/opt/homebrew/bin/tesseract",
+        "/usr/local/bin/tesseract",
+        "/usr/bin/tesseract",
+    ]
+    for c in candidates:
+        if c and os.path.exists(c) and os.access(c, os.X_OK):
+            if pytesseract is not None:
+                pytesseract.pytesseract.tesseract_cmd = c
+            if "TESSDATA_PREFIX" not in os.environ:
+                share = os.path.join(os.path.dirname(os.path.dirname(c)),
+                                     "share", "tessdata")
+                if os.path.isdir(share):
+                    os.environ["TESSDATA_PREFIX"] = share
+            return c
+    return None
+
+
 # --- Проверка окружения -------------------------------------------------------
+
+
+# Подсказка по установке движка без sudo/Homebrew (главная боль на «голом» Mac).
+_INSTALL_HINT = (
+    "движок tesseract не найден. Linux: apt-get install tesseract-ocr "
+    "tesseract-ocr-rus tesseract-ocr-eng. macOS с Homebrew: brew install "
+    "tesseract tesseract-lang. Без sudo/Homebrew (в т.ч. на голом Mac): "
+    "поставьте Miniforge и conda-forge tesseract, затем запускайте скрипт через "
+    "uv — подробный рецепт в references/install.md."
+)
 
 
 def cmd_check(args: argparse.Namespace) -> int:
     problems: list[str] = []
     info: dict[str, Any] = {}
+    tcmd = _configure_tesseract(getattr(args, "tesseract_cmd", None))
+    info["tesseract_cmd"] = tcmd
+    if tcmd is None:
+        problems.append(_INSTALL_HINT)
 
     for name, mod, err_attr in [
         ("pytesseract", pytesseract, "_PYT_ERR"),
@@ -204,10 +257,15 @@ def preprocess(img: np.ndarray, mode: str) -> tuple[np.ndarray, dict[str, Any]]:
     is_photo = mode == "photo" or (mode == "auto" and noise > 18.0)
 
     if is_photo:
-        # Щадящее подавление шума + локальное выравнивание освещённости (CLAHE).
+        # 1) Нормализация освещённости: делим кадр на его сильно размытую копию.
+        #    Это убирает виньетку и неравномерный свет — иначе тёмные края
+        #    «съедают» буквы (на практике: «овор аренды» вместо «Договор аренды»).
+        bg = cv2.GaussianBlur(gray, (0, 0), sigmaX=max(gray.shape) / 20.0)
+        gray = cv2.divide(gray, bg, scale=255).astype(np.uint8)
+        # 2) Щадящее подавление шума + локальный контраст (CLAHE).
         gray = cv2.fastNlMeansDenoising(gray, h=7)
         gray = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)).apply(gray)
-        meta["steps"].extend(["denoise", "clahe"])
+        meta["steps"].extend(["illumination", "denoise", "clahe"])
 
     meta["noise_estimate"] = round(noise, 1)
     return gray, meta
@@ -407,6 +465,7 @@ def cmd_ocr(args: argparse.Namespace) -> int:
     if pytesseract is None or cv2 is None or Document is None:
         return _emit({"error": "не установлены зависимости; запустите команду check"},
                      ok=False)
+    _configure_tesseract(getattr(args, "tesseract_cmd", None))
     if not os.path.isfile(args.input):
         return _emit({"error": f"файл не найден: {args.input}"}, ok=False)
     if not args.out.lower().endswith(".docx"):
@@ -494,6 +553,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     c = sub.add_parser("check", help="проверить окружение (движок, языки, пакеты)")
     c.add_argument("--lang", default=DEFAULT_LANG)
+    c.add_argument("--tesseract-cmd", default=None,
+                   help="путь к бинарю tesseract (если не на PATH)")
     c.set_defaults(func=cmd_check)
 
     o = sub.add_parser("ocr", help="распознать вход и собрать DOCX")
@@ -508,6 +569,9 @@ def build_parser() -> argparse.ArgumentParser:
     o.add_argument("--pdf-dpi", type=int, default=300, help="DPI рендера страниц PDF")
     o.add_argument("--no-flag", action="store_true",
                    help="не помечать красным ненадёжные фрагменты")
+    o.add_argument("--tesseract-cmd", default=None,
+                   help="путь к бинарю tesseract (если не на PATH; напр. "
+                        "~/miniforge3/bin/tesseract)")
     o.set_defaults(func=cmd_ocr)
 
     return p
