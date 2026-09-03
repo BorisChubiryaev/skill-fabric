@@ -1,0 +1,6155 @@
+{
+ "total": 150,
+ "issues": [
+  {
+   "key": "DEMO-1",
+   "fields": {
+    "summary": "Демо-задача 1: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-02T08:13:59.000+0000",
+    "resolutiondate": "2026-07-08T03:15:41.000+0000",
+    "updated": "2026-07-08T03:15:41.000+0000",
+    "duedate": "2026-07-10",
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-2",
+   "fields": {
+    "summary": "Демо-задача 2: настройка прав",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-23T17:11:51.000+0000",
+    "resolutiondate": "2026-07-30T05:48:18.000+0000",
+    "updated": "2026-07-30T05:48:18.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-3",
+   "fields": {
+    "summary": "Демо-задача 3: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-20T19:09:54.000+0000",
+    "resolutiondate": "2026-08-03T02:17:38.000+0000",
+    "updated": "2026-08-03T02:17:38.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-4",
+   "fields": {
+    "summary": "Демо-задача 4: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-04T06:07:16.000+0000",
+    "resolutiondate": "2026-07-15T04:43:37.000+0000",
+    "updated": "2026-07-15T04:43:37.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-5",
+   "fields": {
+    "summary": "Демо-задача 5: интеграция API",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-13T23:08:01.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-17T05:45:40.000+0000",
+    "duedate": "2026-08-01",
+    "labels": [
+     "infra",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-6",
+   "fields": {
+    "summary": "Демо-задача 6: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-11T00:04:00.000+0000",
+    "resolutiondate": "2026-06-21T11:35:00.000+0000",
+    "updated": "2026-06-21T11:35:00.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-7",
+   "fields": {
+    "summary": "Демо-задача 7: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-18T01:12:22.000+0000",
+    "resolutiondate": "2026-06-21T17:29:50.000+0000",
+    "updated": "2026-06-21T17:29:50.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-8",
+   "fields": {
+    "summary": "Демо-задача 8: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-06-14T13:34:51.000+0000",
+    "resolutiondate": "2026-06-22T12:27:33.000+0000",
+    "updated": "2026-06-22T12:27:33.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-9",
+   "fields": {
+    "summary": "Демо-задача 9: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-24T01:48:06.000+0000",
+    "resolutiondate": "2026-09-02T04:11:39.000+0000",
+    "updated": "2026-09-02T04:11:39.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-10",
+   "fields": {
+    "summary": "Демо-задача 10: интеграция API",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-05T23:59:21.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-12T14:15:37.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-11",
+   "fields": {
+    "summary": "Демо-задача 11: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-24T15:08:11.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-03T14:00:42.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-12",
+   "fields": {
+    "summary": "Демо-задача 12: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-25T19:41:38.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-30T04:04:17.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-13",
+   "fields": {
+    "summary": "Демо-задача 13: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-13T14:36:54.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-14",
+   "fields": {
+    "summary": "Демо-задача 14: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-18T06:43:50.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-06-19T10:27:38.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-15",
+   "fields": {
+    "summary": "Демо-задача 15: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-25T20:43:52.000+0000",
+    "resolutiondate": "2026-08-07T00:54:29.000+0000",
+    "updated": "2026-08-07T00:54:29.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-39"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-16",
+   "fields": {
+    "summary": "Демо-задача 16: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-15T06:50:52.000+0000",
+    "resolutiondate": "2026-08-22T04:25:47.000+0000",
+    "updated": "2026-08-22T04:25:47.000+0000",
+    "duedate": "2026-07-23",
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-17",
+   "fields": {
+    "summary": "Демо-задача 17: настройка прав",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-25T18:20:46.000+0000",
+    "resolutiondate": "2026-08-09T14:08:52.000+0000",
+    "updated": "2026-08-09T14:08:52.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-18",
+   "fields": {
+    "summary": "Демо-задача 18: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-06-23T06:51:51.000+0000",
+    "resolutiondate": "2026-07-01T16:29:38.000+0000",
+    "updated": "2026-07-01T16:29:38.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-19",
+   "fields": {
+    "summary": "Демо-задача 19: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-18T09:39:11.000+0000",
+    "resolutiondate": "2026-08-12T23:30:48.000+0000",
+    "updated": "2026-08-12T23:30:48.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-20",
+   "fields": {
+    "summary": "Демо-задача 20: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-27T09:52:59.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-12T06:56:56.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-21",
+   "fields": {
+    "summary": "Демо-задача 21: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-18T18:32:21.000+0000",
+    "resolutiondate": "2026-08-24T09:57:37.000+0000",
+    "updated": "2026-08-24T09:57:37.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-22",
+   "fields": {
+    "summary": "Демо-задача 22: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-24T21:17:11.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": "2026-09-16",
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-23",
+   "fields": {
+    "summary": "Демо-задача 23: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-30T12:24:35.000+0000",
+    "resolutiondate": "2026-08-06T10:24:26.000+0000",
+    "updated": "2026-08-06T10:24:26.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-24",
+   "fields": {
+    "summary": "Демо-задача 24: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-26T16:54:50.000+0000",
+    "resolutiondate": "2026-07-08T05:01:26.000+0000",
+    "updated": "2026-07-08T05:01:26.000+0000",
+    "duedate": "2026-07-01",
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-25",
+   "fields": {
+    "summary": "Демо-задача 25: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-01T08:34:41.000+0000",
+    "resolutiondate": "2026-07-03T12:29:09.000+0000",
+    "updated": "2026-07-03T12:29:09.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-26",
+   "fields": {
+    "summary": "Демо-задача 26: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-13T07:09:10.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-24T13:42:01.000+0000",
+    "duedate": "2026-07-17",
+    "labels": [
+     "ux",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-27",
+   "fields": {
+    "summary": "Демо-задача 27: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-17T22:43:58.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-22T13:00:42.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-28",
+   "fields": {
+    "summary": "Демо-задача 28: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-01T05:06:46.000+0000",
+    "resolutiondate": "2026-08-08T00:19:15.000+0000",
+    "updated": "2026-08-08T00:19:15.000+0000",
+    "duedate": "2026-09-01",
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-29",
+   "fields": {
+    "summary": "Демо-задача 29: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-07T12:29:04.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-11T16:53:17.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-30",
+   "fields": {
+    "summary": "Демо-задача 30: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-31T16:33:54.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-17T12:29:43.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-31",
+   "fields": {
+    "summary": "Демо-задача 31: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-11T15:35:27.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-14T05:33:10.000+0000",
+    "duedate": "2026-07-18",
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-126"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-32",
+   "fields": {
+    "summary": "Демо-задача 32: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-09T15:37:03.000+0000",
+    "resolutiondate": "2026-07-15T16:45:00.000+0000",
+    "updated": "2026-07-15T16:45:00.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-33",
+   "fields": {
+    "summary": "Демо-задача 33: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-24T12:21:05.000+0000",
+    "resolutiondate": "2026-08-29T04:54:47.000+0000",
+    "updated": "2026-08-29T04:54:47.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-34",
+   "fields": {
+    "summary": "Демо-задача 34: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-28T11:58:05.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-31T04:05:20.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-35",
+   "fields": {
+    "summary": "Демо-задача 35: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-04T03:01:07.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-20T08:54:09.000+0000",
+    "duedate": "2026-07-14",
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-36",
+   "fields": {
+    "summary": "Демо-задача 36: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-03T16:06:51.000+0000",
+    "resolutiondate": "2026-07-05T19:19:02.000+0000",
+    "updated": "2026-07-05T19:19:02.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-37",
+   "fields": {
+    "summary": "Демо-задача 37: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-03T10:44:52.000+0000",
+    "resolutiondate": "2026-07-06T15:21:16.000+0000",
+    "updated": "2026-07-06T15:21:16.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-38",
+   "fields": {
+    "summary": "Демо-задача 38: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-08T09:20:50.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-39",
+   "fields": {
+    "summary": "Демо-задача 39: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-23T00:46:23.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-40",
+   "fields": {
+    "summary": "Демо-задача 40: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-21T12:11:35.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-14T07:29:38.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-106"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-41",
+   "fields": {
+    "summary": "Демо-задача 41: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-30T20:36:19.000+0000",
+    "resolutiondate": "2026-07-08T22:09:47.000+0000",
+    "updated": "2026-07-08T22:09:47.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-42",
+   "fields": {
+    "summary": "Демо-задача 42: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-23T07:21:37.000+0000",
+    "resolutiondate": "2026-07-15T02:29:01.000+0000",
+    "updated": "2026-07-15T02:29:01.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-7"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-43",
+   "fields": {
+    "summary": "Демо-задача 43: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-17T04:26:28.000+0000",
+    "resolutiondate": "2026-06-22T23:38:32.000+0000",
+    "updated": "2026-06-22T23:38:32.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-44",
+   "fields": {
+    "summary": "Демо-задача 44: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-26T08:46:38.000+0000",
+    "resolutiondate": "2026-08-29T22:02:58.000+0000",
+    "updated": "2026-08-29T22:02:58.000+0000",
+    "duedate": "2026-09-25",
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-45",
+   "fields": {
+    "summary": "Демо-задача 45: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-06T09:42:34.000+0000",
+    "resolutiondate": "2026-07-15T06:44:57.000+0000",
+    "updated": "2026-07-15T06:44:57.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-46",
+   "fields": {
+    "summary": "Демо-задача 46: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-27T18:42:54.000+0000",
+    "resolutiondate": "2026-07-02T17:31:33.000+0000",
+    "updated": "2026-07-02T17:31:33.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-47",
+   "fields": {
+    "summary": "Демо-задача 47: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-16T12:10:08.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-18T07:10:13.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-48",
+   "fields": {
+    "summary": "Демо-задача 48: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-10T18:39:34.000+0000",
+    "resolutiondate": "2026-06-25T22:19:22.000+0000",
+    "updated": "2026-06-25T22:19:22.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-49",
+   "fields": {
+    "summary": "Демо-задача 49: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-31T22:02:07.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-16T18:46:37.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-50",
+   "fields": {
+    "summary": "Демо-задача 50: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-06-29T13:13:27.000+0000",
+    "resolutiondate": "2026-07-06T00:31:22.000+0000",
+    "updated": "2026-07-06T00:31:22.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-76"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-51",
+   "fields": {
+    "summary": "Демо-задача 51: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-10T03:11:30.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-07T19:36:39.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-52",
+   "fields": {
+    "summary": "Демо-задача 52: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-08T19:29:35.000+0000",
+    "resolutiondate": "2026-06-20T13:05:42.000+0000",
+    "updated": "2026-06-20T13:05:42.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-53",
+   "fields": {
+    "summary": "Демо-задача 53: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-10T17:18:26.000+0000",
+    "resolutiondate": "2026-06-21T01:00:30.000+0000",
+    "updated": "2026-06-21T01:00:30.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-54",
+   "fields": {
+    "summary": "Демо-задача 54: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-10T16:40:52.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-19T00:12:37.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-55",
+   "fields": {
+    "summary": "Демо-задача 55: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-18T20:35:34.000+0000",
+    "resolutiondate": "2026-06-22T06:03:01.000+0000",
+    "updated": "2026-06-22T06:03:01.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-56",
+   "fields": {
+    "summary": "Демо-задача 56: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-11T07:17:58.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-28T06:55:31.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-57",
+   "fields": {
+    "summary": "Демо-задача 57: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-13T05:12:47.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-15T10:28:39.000+0000",
+    "duedate": "2026-09-08",
+    "labels": [
+     "infra",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-58",
+   "fields": {
+    "summary": "Демо-задача 58: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-30T08:46:17.000+0000",
+    "resolutiondate": "2026-08-24T02:19:20.000+0000",
+    "updated": "2026-08-24T02:19:20.000+0000",
+    "duedate": "2026-08-08",
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-59",
+   "fields": {
+    "summary": "Демо-задача 59: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-08T21:01:20.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-06-11T19:20:59.000+0000",
+    "duedate": "2026-06-16",
+    "labels": [
+     "frontend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-60",
+   "fields": {
+    "summary": "Демо-задача 60: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-10T20:48:01.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-61",
+   "fields": {
+    "summary": "Демо-задача 61: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-24T23:36:27.000+0000",
+    "resolutiondate": "2026-09-01T14:47:52.000+0000",
+    "updated": "2026-09-01T14:47:52.000+0000",
+    "duedate": "2026-08-17",
+    "labels": [
+     "infra",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-62",
+   "fields": {
+    "summary": "Демо-задача 62: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-14T23:57:35.000+0000",
+    "resolutiondate": "2026-06-21T06:40:54.000+0000",
+    "updated": "2026-06-21T06:40:54.000+0000",
+    "duedate": "2026-07-11",
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-63",
+   "fields": {
+    "summary": "Демо-задача 63: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-26T10:13:57.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": "2026-09-23",
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-64",
+   "fields": {
+    "summary": "Демо-задача 64: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-19T05:00:35.000+0000",
+    "resolutiondate": "2026-07-24T00:57:46.000+0000",
+    "updated": "2026-07-24T00:57:46.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-65",
+   "fields": {
+    "summary": "Демо-задача 65: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-08T22:04:53.000+0000",
+    "resolutiondate": "2026-08-12T03:36:23.000+0000",
+    "updated": "2026-08-12T03:36:23.000+0000",
+    "duedate": "2026-08-01",
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-27"
+      }
+     }
+    ],
+    "customfield_10100": {
+     "value": "Impediment"
+    }
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-66",
+   "fields": {
+    "summary": "Демо-задача 66: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-21T21:40:42.000+0000",
+    "resolutiondate": "2026-08-17T17:39:51.000+0000",
+    "updated": "2026-08-17T17:39:51.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": [],
+    "customfield_10100": {
+     "value": "Impediment"
+    }
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-67",
+   "fields": {
+    "summary": "Демо-задача 67: интеграция API",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-15T00:26:19.000+0000",
+    "resolutiondate": "2026-08-20T05:22:06.000+0000",
+    "updated": "2026-08-20T05:22:06.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-68",
+   "fields": {
+    "summary": "Демо-задача 68: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-22T03:03:53.000+0000",
+    "resolutiondate": "2026-08-23T19:51:20.000+0000",
+    "updated": "2026-08-23T19:51:20.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-69",
+   "fields": {
+    "summary": "Демо-задача 69: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-12T06:44:28.000+0000",
+    "resolutiondate": "2026-07-18T22:17:22.000+0000",
+    "updated": "2026-07-18T22:17:22.000+0000",
+    "duedate": "2026-08-18",
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-36"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-70",
+   "fields": {
+    "summary": "Демо-задача 70: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-28T12:55:01.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-08T07:13:32.000+0000",
+    "duedate": "2026-08-09",
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-71",
+   "fields": {
+    "summary": "Демо-задача 71: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-06T21:07:06.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-12T03:56:50.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": [],
+    "customfield_10100": {
+     "value": "Impediment"
+    }
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-72",
+   "fields": {
+    "summary": "Демо-задача 72: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-08T04:09:31.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-73",
+   "fields": {
+    "summary": "Демо-задача 73: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-06-24T03:27:04.000+0000",
+    "resolutiondate": "2026-06-25T20:04:33.000+0000",
+    "updated": "2026-06-25T20:04:33.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-74",
+   "fields": {
+    "summary": "Демо-задача 74: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-06-27T20:46:01.000+0000",
+    "resolutiondate": "2026-07-04T19:37:30.000+0000",
+    "updated": "2026-07-04T19:37:30.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-75",
+   "fields": {
+    "summary": "Демо-задача 75: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-10T22:57:17.000+0000",
+    "resolutiondate": "2026-08-04T07:17:04.000+0000",
+    "updated": "2026-08-04T07:17:04.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-76",
+   "fields": {
+    "summary": "Демо-задача 76: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-14T09:28:39.000+0000",
+    "resolutiondate": "2026-07-17T10:38:03.000+0000",
+    "updated": "2026-07-17T10:38:03.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-77",
+   "fields": {
+    "summary": "Демо-задача 77: интеграция API",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-25T20:37:44.000+0000",
+    "resolutiondate": "2026-06-29T19:36:18.000+0000",
+    "updated": "2026-06-29T19:36:18.000+0000",
+    "duedate": "2026-07-04",
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-78",
+   "fields": {
+    "summary": "Демо-задача 78: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-07T05:57:57.000+0000",
+    "resolutiondate": "2026-06-26T07:43:53.000+0000",
+    "updated": "2026-06-26T07:43:53.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-79",
+   "fields": {
+    "summary": "Демо-задача 79: интеграция API",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-09T03:32:02.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-01T12:05:28.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-80",
+   "fields": {
+    "summary": "Демо-задача 80: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-15T04:21:23.000+0000",
+    "resolutiondate": "2026-08-29T08:54:42.000+0000",
+    "updated": "2026-08-29T08:54:42.000+0000",
+    "duedate": "2026-09-08",
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-81",
+   "fields": {
+    "summary": "Демо-задача 81: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-23T11:27:13.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-20T15:33:42.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-82",
+   "fields": {
+    "summary": "Демо-задача 82: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-26T05:45:16.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-83",
+   "fields": {
+    "summary": "Демо-задача 83: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-11T20:30:51.000+0000",
+    "resolutiondate": "2026-06-21T09:43:08.000+0000",
+    "updated": "2026-06-21T09:43:08.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-84",
+   "fields": {
+    "summary": "Демо-задача 84: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-26T10:03:25.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": "2026-09-29",
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": [],
+    "customfield_10100": {
+     "value": "Impediment"
+    }
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-85",
+   "fields": {
+    "summary": "Демо-задача 85: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-07T05:56:42.000+0000",
+    "resolutiondate": "2026-06-21T19:24:28.000+0000",
+    "updated": "2026-06-21T19:24:28.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-86",
+   "fields": {
+    "summary": "Демо-задача 86: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-31T14:09:46.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-29T06:04:25.000+0000",
+    "duedate": "2026-08-13",
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-87",
+   "fields": {
+    "summary": "Демо-задача 87: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-20T00:41:22.000+0000",
+    "resolutiondate": "2026-08-27T09:51:45.000+0000",
+    "updated": "2026-08-27T09:51:45.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-88",
+   "fields": {
+    "summary": "Демо-задача 88: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-28T02:00:33.000+0000",
+    "resolutiondate": "2026-08-02T19:15:37.000+0000",
+    "updated": "2026-08-02T19:15:37.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-89",
+   "fields": {
+    "summary": "Демо-задача 89: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-22T03:23:06.000+0000",
+    "resolutiondate": "2026-08-04T09:42:46.000+0000",
+    "updated": "2026-08-04T09:42:46.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-90",
+   "fields": {
+    "summary": "Демо-задача 90: настройка прав",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-01T22:15:16.000+0000",
+    "resolutiondate": "2026-08-12T11:20:29.000+0000",
+    "updated": "2026-08-12T11:20:29.000+0000",
+    "duedate": "2026-07-08",
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-91",
+   "fields": {
+    "summary": "Демо-задача 91: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-27T22:51:57.000+0000",
+    "resolutiondate": "2026-08-01T05:16:27.000+0000",
+    "updated": "2026-08-01T05:16:27.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-92",
+   "fields": {
+    "summary": "Демо-задача 92: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-30T19:09:32.000+0000",
+    "resolutiondate": "2026-07-30T05:17:26.000+0000",
+    "updated": "2026-07-30T05:17:26.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-93",
+   "fields": {
+    "summary": "Демо-задача 93: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-30T03:10:08.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-10T14:16:48.000+0000",
+    "duedate": "2026-08-28",
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-94",
+   "fields": {
+    "summary": "Демо-задача 94: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-07T13:06:53.000+0000",
+    "resolutiondate": "2026-06-14T21:06:09.000+0000",
+    "updated": "2026-06-14T21:06:09.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-4"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-95",
+   "fields": {
+    "summary": "Демо-задача 95: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-01T19:57:07.000+0000",
+    "resolutiondate": "2026-08-07T08:14:02.000+0000",
+    "updated": "2026-08-07T08:14:02.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-96",
+   "fields": {
+    "summary": "Демо-задача 96: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-27T22:12:34.000+0000",
+    "resolutiondate": "2026-08-05T20:27:04.000+0000",
+    "updated": "2026-08-05T20:27:04.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-97",
+   "fields": {
+    "summary": "Демо-задача 97: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-26T03:13:27.000+0000",
+    "resolutiondate": "2026-07-05T00:44:57.000+0000",
+    "updated": "2026-07-05T00:44:57.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-98",
+   "fields": {
+    "summary": "Демо-задача 98: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-20T03:56:06.000+0000",
+    "resolutiondate": "2026-08-09T01:54:17.000+0000",
+    "updated": "2026-08-09T01:54:17.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-99",
+   "fields": {
+    "summary": "Демо-задача 99: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-04T20:20:55.000+0000",
+    "resolutiondate": "2026-08-04T14:16:01.000+0000",
+    "updated": "2026-08-04T14:16:01.000+0000",
+    "duedate": "2026-08-07",
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-100",
+   "fields": {
+    "summary": "Демо-задача 100: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-15T13:50:26.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-9"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-101",
+   "fields": {
+    "summary": "Демо-задача 101: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-17T00:38:40.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-30T17:49:21.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-102",
+   "fields": {
+    "summary": "Демо-задача 102: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-14T05:43:29.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-02T00:50:14.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-103",
+   "fields": {
+    "summary": "Демо-задача 103: доработка формы",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-04T05:24:00.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": "2026-08-14",
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-104",
+   "fields": {
+    "summary": "Демо-задача 104: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-12T13:09:46.000+0000",
+    "resolutiondate": "2026-07-15T04:10:01.000+0000",
+    "updated": "2026-07-15T04:10:01.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-105",
+   "fields": {
+    "summary": "Демо-задача 105: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-22T13:10:37.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-106",
+   "fields": {
+    "summary": "Демо-задача 106: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-03T13:52:53.000+0000",
+    "resolutiondate": "2026-07-17T22:53:24.000+0000",
+    "updated": "2026-07-17T22:53:24.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-107",
+   "fields": {
+    "summary": "Демо-задача 107: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-19T06:38:42.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-108",
+   "fields": {
+    "summary": "Демо-задача 108: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-18T15:29:34.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-105"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-109",
+   "fields": {
+    "summary": "Демо-задача 109: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-22T19:47:07.000+0000",
+    "resolutiondate": "2026-08-10T14:23:22.000+0000",
+    "updated": "2026-08-10T14:23:22.000+0000",
+    "duedate": "2026-08-20",
+    "labels": [
+     "backend",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": [
+     {
+      "type": {
+       "inward": "is blocked by"
+      },
+      "inwardIssue": {
+       "key": "DEMO-134"
+      }
+     }
+    ]
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-110",
+   "fields": {
+    "summary": "Демо-задача 110: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-04T04:35:29.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-09T01:39:33.000+0000",
+    "duedate": "2026-08-28",
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-111",
+   "fields": {
+    "summary": "Демо-задача 111: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-06T06:25:07.000+0000",
+    "resolutiondate": "2026-06-12T20:08:13.000+0000",
+    "updated": "2026-06-12T20:08:13.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-112",
+   "fields": {
+    "summary": "Демо-задача 112: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-08T00:36:17.000+0000",
+    "resolutiondate": "2026-06-10T18:58:28.000+0000",
+    "updated": "2026-06-10T18:58:28.000+0000",
+    "duedate": "2026-07-12",
+    "labels": [
+     "ux",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-113",
+   "fields": {
+    "summary": "Демо-задача 113: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-13T07:58:12.000+0000",
+    "resolutiondate": "2026-06-22T15:09:56.000+0000",
+    "updated": "2026-06-22T15:09:56.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-114",
+   "fields": {
+    "summary": "Демо-задача 114: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-22T21:55:15.000+0000",
+    "resolutiondate": "2026-08-29T04:27:47.000+0000",
+    "updated": "2026-08-29T04:27:47.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-115",
+   "fields": {
+    "summary": "Демо-задача 115: настройка прав",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-19T03:24:02.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-07T19:42:16.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-116",
+   "fields": {
+    "summary": "Демо-задача 116: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-22T13:41:01.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-117",
+   "fields": {
+    "summary": "Демо-задача 117: рефакторинг",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-29T11:37:59.000+0000",
+    "resolutiondate": "2026-07-03T21:23:42.000+0000",
+    "updated": "2026-07-03T21:23:42.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-118",
+   "fields": {
+    "summary": "Демо-задача 118: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-13T04:22:42.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-18T07:14:29.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": [],
+    "customfield_10100": {
+     "value": "Impediment"
+    }
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-119",
+   "fields": {
+    "summary": "Демо-задача 119: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-03T04:38:51.000+0000",
+    "resolutiondate": "2026-07-10T23:47:40.000+0000",
+    "updated": "2026-07-10T23:47:40.000+0000",
+    "duedate": "2026-08-11",
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-120",
+   "fields": {
+    "summary": "Демо-задача 120: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-04T19:54:22.000+0000",
+    "resolutiondate": "2026-08-15T18:48:46.000+0000",
+    "updated": "2026-08-15T18:48:46.000+0000",
+    "duedate": "2026-07-16",
+    "labels": [
+     "infra",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-121",
+   "fields": {
+    "summary": "Демо-задача 121: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-27T01:52:41.000+0000",
+    "resolutiondate": "2026-08-30T12:51:15.000+0000",
+    "updated": "2026-08-30T12:51:15.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-122",
+   "fields": {
+    "summary": "Демо-задача 122: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-04T22:05:06.000+0000",
+    "resolutiondate": "2026-07-17T15:31:35.000+0000",
+    "updated": "2026-07-17T15:31:35.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-123",
+   "fields": {
+    "summary": "Демо-задача 123: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-12T17:35:38.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-23T18:22:45.000+0000",
+    "duedate": "2026-09-18",
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-124",
+   "fields": {
+    "summary": "Демо-задача 124: настройка прав",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-18T20:54:49.000+0000",
+    "resolutiondate": "2026-07-22T04:11:02.000+0000",
+    "updated": "2026-07-22T04:11:02.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-125",
+   "fields": {
+    "summary": "Демо-задача 125: интеграция API",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-28T01:22:03.000+0000",
+    "resolutiondate": "2026-08-02T09:49:27.000+0000",
+    "updated": "2026-08-02T09:49:27.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-126",
+   "fields": {
+    "summary": "Демо-задача 126: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-12T03:54:03.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-31T05:37:40.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-127",
+   "fields": {
+    "summary": "Демо-задача 127: настройка прав",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-30T21:25:38.000+0000",
+    "resolutiondate": "2026-08-06T22:19:58.000+0000",
+    "updated": "2026-08-06T22:19:58.000+0000",
+    "duedate": "2026-08-23",
+    "labels": [
+     "frontend",
+     "ux"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-128",
+   "fields": {
+    "summary": "Демо-задача 128: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-13T03:05:16.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-20T21:37:02.000+0000",
+    "duedate": "2026-09-09",
+    "labels": [
+     "frontend",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": [],
+    "customfield_10100": {
+     "value": "Impediment"
+    }
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-129",
+   "fields": {
+    "summary": "Демо-задача 129: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-23T23:37:49.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-07T10:45:40.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-130",
+   "fields": {
+    "summary": "Демо-задача 130: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-25T13:20:28.000+0000",
+    "resolutiondate": "2026-08-28T14:55:44.000+0000",
+    "updated": "2026-08-28T14:55:44.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-131",
+   "fields": {
+    "summary": "Демо-задача 131: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-19T22:46:51.000+0000",
+    "resolutiondate": "2026-08-06T00:40:44.000+0000",
+    "updated": "2026-08-06T00:40:44.000+0000",
+    "duedate": "2026-07-26",
+    "labels": [
+     "frontend",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-132",
+   "fields": {
+    "summary": "Демо-задача 132: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-28T12:19:55.000+0000",
+    "resolutiondate": "2026-07-04T16:55:14.000+0000",
+    "updated": "2026-07-04T16:55:14.000+0000",
+    "duedate": "2026-07-20",
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-133",
+   "fields": {
+    "summary": "Демо-задача 133: настройка прав",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-27T14:00:55.000+0000",
+    "resolutiondate": "2026-09-01T19:11:20.000+0000",
+    "updated": "2026-09-01T19:11:20.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-134",
+   "fields": {
+    "summary": "Демо-задача 134: настройка прав",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-07T18:06:02.000+0000",
+    "resolutiondate": "2026-07-14T16:30:34.000+0000",
+    "updated": "2026-07-14T16:30:34.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-135",
+   "fields": {
+    "summary": "Демо-задача 135: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-06-29T03:38:05.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-06-30T17:57:46.000+0000",
+    "duedate": "2026-08-02",
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-136",
+   "fields": {
+    "summary": "Демо-задача 136: доработка формы",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-08-05T20:20:37.000+0000",
+    "resolutiondate": "2026-08-25T22:48:36.000+0000",
+    "updated": "2026-08-25T22:48:36.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-137",
+   "fields": {
+    "summary": "Демо-задача 137: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-07-12T01:16:49.000+0000",
+    "resolutiondate": "2026-08-19T03:10:20.000+0000",
+    "updated": "2026-08-19T03:10:20.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-138",
+   "fields": {
+    "summary": "Демо-задача 138: интеграция API",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Blocked",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-20T10:26:12.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "ux",
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": null,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-139",
+   "fields": {
+    "summary": "Демо-задача 139: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-18T15:48:01.000+0000",
+    "resolutiondate": "2026-08-07T10:12:24.000+0000",
+    "updated": "2026-08-07T10:12:24.000+0000",
+    "duedate": "2026-07-25",
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-140",
+   "fields": {
+    "summary": "Демо-задача 140: интеграция API",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Мария Соколова"
+    },
+    "created": "2026-06-17T08:51:43.000+0000",
+    "resolutiondate": "2026-07-07T09:19:45.000+0000",
+    "updated": "2026-07-07T09:19:45.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-141",
+   "fields": {
+    "summary": "Демо-задача 141: рефакторинг",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "In Review",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Мария Соколова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-06-15T13:26:32.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-07-30T21:24:58.000+0000",
+    "duedate": "2026-07-07",
+    "labels": [],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-142",
+   "fields": {
+    "summary": "Демо-задача 142: рефакторинг",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-07-01T21:16:07.000+0000",
+    "resolutiondate": "2026-07-06T13:47:46.000+0000",
+    "updated": "2026-07-06T13:47:46.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-143",
+   "fields": {
+    "summary": "Демо-задача 143: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-09T14:21:49.000+0000",
+    "resolutiondate": "2026-08-25T00:26:48.000+0000",
+    "updated": "2026-08-25T00:26:48.000+0000",
+    "duedate": "2026-08-28",
+    "labels": [],
+    "components": [
+     {
+      "name": "Бэкофис"
+     }
+    ],
+    "customfield_10002": 3,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-144",
+   "fields": {
+    "summary": "Демо-задача 144: ошибка в отчёте",
+    "issuetype": {
+     "name": "Bug"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Алексей Крылов"
+    },
+    "reporter": {
+     "displayName": "Алексей Крылов"
+    },
+    "created": "2026-08-15T07:10:51.000+0000",
+    "resolutiondate": "2026-08-25T06:44:40.000+0000",
+    "updated": "2026-08-25T06:44:40.000+0000",
+    "duedate": null,
+    "labels": [
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 1,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-145",
+   "fields": {
+    "summary": "Демо-задача 145: ошибка в отчёте",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-08-21T14:36:21.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-08-29T06:29:32.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Портал"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-146",
+   "fields": {
+    "summary": "Демо-задача 146: интеграция API",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-06T06:11:26.000+0000",
+    "resolutiondate": "2026-07-18T05:14:40.000+0000",
+    "updated": "2026-07-18T05:14:40.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 2,
+    "issuelinks": [],
+    "customfield_10100": {
+     "value": "Impediment"
+    }
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-147",
+   "fields": {
+    "summary": "Демо-задача 147: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "priority": {
+     "name": "High"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-08-11T14:48:27.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [
+     "infra"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-148",
+   "fields": {
+    "summary": "Демо-задача 148: ошибка в отчёте",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Open",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": null,
+    "reporter": {
+     "displayName": "Ольга Титова"
+    },
+    "created": "2026-07-29T20:58:57.000+0000",
+    "resolutiondate": null,
+    "updated": "2026-09-03T09:14:35.000+0000",
+    "duedate": null,
+    "labels": [],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 8,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-149",
+   "fields": {
+    "summary": "Демо-задача 149: доработка формы",
+    "issuetype": {
+     "name": "Task"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Medium"
+    },
+    "assignee": {
+     "displayName": "Ольга Титова"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-07-10T08:51:24.000+0000",
+    "resolutiondate": "2026-07-29T18:17:41.000+0000",
+    "updated": "2026-07-29T18:17:41.000+0000",
+    "duedate": "2026-08-07",
+    "labels": [
+     "ux",
+     "frontend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  },
+  {
+   "key": "DEMO-150",
+   "fields": {
+    "summary": "Демо-задача 150: настройка прав",
+    "issuetype": {
+     "name": "Story"
+    },
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "priority": {
+     "name": "Low"
+    },
+    "assignee": {
+     "displayName": "Иван Петров"
+    },
+    "reporter": {
+     "displayName": "Иван Петров"
+    },
+    "created": "2026-06-15T05:38:07.000+0000",
+    "resolutiondate": "2026-07-06T03:12:32.000+0000",
+    "updated": "2026-07-06T03:12:32.000+0000",
+    "duedate": null,
+    "labels": [
+     "frontend",
+     "backend"
+    ],
+    "components": [
+     {
+      "name": "Платежи"
+     }
+    ],
+    "customfield_10002": 5,
+    "issuelinks": []
+   },
+   "changelog": {
+    "histories": []
+   }
+  }
+ ]
+}
