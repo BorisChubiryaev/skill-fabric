@@ -249,6 +249,34 @@ def normalize_issue(raw: dict, sp_field: str | None = None) -> dict:
     }
 
 
+def _load_transitions(path: str) -> dict[str, list[dict]]:
+    """Внешняя история статусов: {"KEY-1": [{"at","from","to"}, ...]} либо
+    плоский список записей с полем key/issue. Нужна, когда MCP не отдаёт
+    changelog вместе с задачами."""
+    with open(path, encoding="utf-8") as fh:
+        obj = json.load(fh)
+    out: dict[str, list[dict]] = defaultdict(list)
+
+    def add(key, e):
+        out[key].append({"at": e.get("at") or e.get("created"),
+                         "from": e.get("from") or e.get("fromString"),
+                         "to": e.get("to") or e.get("toString")})
+
+    if isinstance(obj, dict):
+        for key, evs in obj.items():
+            for e in evs or []:
+                add(key, e)
+    elif isinstance(obj, list):
+        for e in obj:
+            key = e.get("key") or e.get("issue")
+            if key:
+                add(key, e)
+    for key in list(out):
+        out[key] = sorted((e for e in out[key] if e.get("at")),
+                          key=lambda e: str(e["at"]))
+    return dict(out)
+
+
 def cmd_normalize(args: argparse.Namespace) -> int:
     issues: list[dict] = []
     seen: set[str] = set()
@@ -282,6 +310,22 @@ def cmd_normalize(args: argparse.Namespace) -> int:
 
     if missing:
         return _emit({"error": "файлы не найдены: " + ", ".join(missing)}, ok=False)
+
+    merged_from_file = 0
+    if getattr(args, "transitions", None):
+        if not os.path.isfile(args.transitions):
+            return _emit({"error": f"файл переходов не найден: {args.transitions}"},
+                         ok=False)
+        trans = _load_transitions(args.transitions)
+        for issue in issues:
+            if not issue["changelog"] and trans.get(issue["key"]):
+                issue["changelog"] = [
+                    {"at": iso(parse_dt(e["at"])), "from": e.get("from"),
+                     "to": e.get("to")}
+                    for e in trans[issue["key"]] if parse_dt(e["at"])
+                ]
+                if issue["changelog"]:
+                    merged_from_file += 1
     if not issues:
         return _emit({"error": "во входных файлах не найдено ни одной задачи "
                                "(ожидается ответ Jira search с полем issues)"}, ok=False)
@@ -292,6 +336,7 @@ def cmd_normalize(args: argparse.Namespace) -> int:
         "output": os.path.abspath(args.out),
         "issues": len(issues),
         "with_changelog": with_cl,
+        "changelog_merged_from_file": merged_from_file,
         "changelog_coverage_pct": round(100.0 * with_cl / len(issues), 1),
         "note": ("ни у одной задачи нет changelog — время цикла посчитать не "
                  "получится; выгрузите задачи с expand=changelog" if with_cl == 0
@@ -333,6 +378,67 @@ def first_wip_time(issue: dict, wip_statuses: set[str]) -> datetime | None:
         if to and (to in wip_statuses or to.lower() in {s.lower() for s in wip_statuses}):
             return parse_dt(ev["at"])
     return None
+
+
+# Статусы ожидания: время в них — это не работа, а простой. Именно так
+# «задача на 574 дня» оказывается задачей, две трети пролежавшей в Need Info.
+WAITING_PATTERN = re.compile(
+    r"(need\s*info|ожид|пауз|hold|blocked|заблок|на\s*согласован|уточн|"
+    r"waiting|pending)", re.I
+)
+# Порог «вечной» незавершёнки: контейнеры-эпики, живущие годами, ломают
+# перцентили и CFD, поэтому считаются отдельно от обычного зависания.
+ETERNAL_WIP_DAYS = 180.0
+
+
+def status_durations(issue: dict, now: datetime) -> dict[str, float]:
+    """Сколько дней задача провела в каждом статусе (по changelog).
+    Начальный статус берём из поля `from` первого перехода."""
+    cl = issue.get("changelog") or []
+    created = parse_dt(issue.get("created"))
+    if not cl or not created:
+        return {}
+    end = parse_dt(issue.get("resolved")) or now
+    out: dict[str, float] = defaultdict(float)
+    cur = (cl[0].get("from") or "—").strip() or "—"
+    cur_t = created
+    for ev in cl:
+        t = parse_dt(ev.get("at"))
+        if not t:
+            continue
+        out[cur] += max(0.0, days_between(cur_t, t))
+        cur = (ev.get("to") or cur).strip() or cur
+        cur_t = t
+    out[cur] += max(0.0, days_between(cur_t, end))
+    return dict(out)
+
+
+def detect_batch_closures(issues: list[dict], min_batch: int) -> list[dict]:
+    """Пачковые закрытия: много задач закрыто в одно и то же время.
+    Признак того, что статусы двигают задним числом, а метрики потока
+    отражают учёт, а не реальную работу."""
+    by_hour: dict[str, list[str]] = defaultdict(list)
+    for i in issues:
+        r = parse_dt(i.get("resolved"))
+        if r:
+            by_hour[r.strftime("%Y-%m-%d %H:00")].append(i["key"])
+    return sorted(
+        ({"at": h, "count": len(keys), "keys": keys[:20]}
+         for h, keys in by_hour.items() if len(keys) >= min_batch),
+        key=lambda b: -b["count"])
+
+
+def detect_instant_closures(issues: list[dict], max_hours: float = 1.0) -> list[dict]:
+    """Задачи, созданные и закрытые почти мгновенно: они занижают перцентили,
+    хотя реальная работа шла вне Jira (или задача заведена постфактум)."""
+    out = []
+    for i in issues:
+        c, r = parse_dt(i.get("created")), parse_dt(i.get("resolved"))
+        if c and r and 0 <= days_between(c, r) * 24 <= max_hours:
+            out.append({"key": i["key"], "summary": (i.get("summary") or "")[:120],
+                        "assignee": i.get("assignee"),
+                        "minutes": round(days_between(c, r) * 1440, 1)})
+    return sorted(out, key=lambda x: x["minutes"])
 
 
 def category_at(issue: dict, at: datetime, status_cat: dict[str, str]) -> str | None:
@@ -506,7 +612,7 @@ def cmd_analyze(args: argparse.Namespace) -> int:
             d.update(extra)
         return d
 
-    stale, blocked, overdue, aging, longlived = [], [], [], [], []
+    stale, blocked, overdue, aging, longlived, eternal = [], [], [], [], [], []
     for i in open_issues:
         upd, crt = parse_dt(i.get("updated")), parse_dt(i.get("created"))
         if upd and days_between(upd, now) >= stale_days:
@@ -523,12 +629,45 @@ def cmd_analyze(args: argparse.Namespace) -> int:
             w = first_wip_time(i, wip_statuses) or crt
             if w:
                 age = days_between(w, now)
-                if age >= aging_threshold:
+                if age >= ETERNAL_WIP_DAYS:
+                    # Такие «задачи» почти всегда контейнеры (эпики), а не работа:
+                    # держим их отдельно, иначе они искажают и CFD, и перцентили.
+                    eternal.append(brief(i, {"in_progress_days": round(age, 1),
+                                             "type": i.get("type")}))
+                elif age >= aging_threshold:
                     aging.append(brief(i, {"in_progress_days": round(age, 1)}))
 
     for lst, k in ((stale, "days_idle"), (overdue, "overdue_days"),
-                   (aging, "in_progress_days"), (longlived, "age_days")):
+                   (aging, "in_progress_days"), (longlived, "age_days"),
+                   (eternal, "in_progress_days")):
         lst.sort(key=lambda x: -x[k])
+
+    # --- Время ожидания и эффективность потока ---
+    waiting_total: dict[str, float] = defaultdict(float)
+    per_issue_wait: list[dict] = []
+    flow_eff: list[float] = []
+    for i in issues:
+        durs = status_durations(i, now)
+        if not durs:
+            continue
+        total = sum(durs.values())
+        wait = sum(d for st, d in durs.items() if WAITING_PATTERN.search(st))
+        for st, d in durs.items():
+            waiting_total[st] += d
+        if total > 0:
+            if wait > 0:
+                per_issue_wait.append({
+                    "key": i["key"], "summary": (i.get("summary") or "")[:120],
+                    "waiting_days": round(wait, 1), "total_days": round(total, 1),
+                    "waiting_share_pct": round(100.0 * wait / total, 1)})
+            if i["status_category"] == DONE:
+                flow_eff.append(100.0 * max(0.0, total - wait) / total)
+    per_issue_wait.sort(key=lambda x: -x["waiting_days"])
+    top_statuses = sorted(waiting_total.items(), key=lambda kv: -kv[1])[:12]
+
+    # --- Качество данных ---
+    batches = detect_batch_closures(issues, args.batch_min)
+    instant = detect_instant_closures(issues)
 
     metrics = {
         "generated_at": iso(now),
@@ -558,9 +697,22 @@ def cmd_analyze(args: argparse.Namespace) -> int:
             "bus_factor": bus,
             "unassigned_open": sum(1 for i in open_issues if not i.get("assignee")),
         },
+        "waiting": {
+            "by_status_days": [{"status": st, "days": round(d, 1)}
+                               for st, d in top_statuses],
+            "top_issues": per_issue_wait[:25],
+            "flow_efficiency_pct": (round(sum(flow_eff) / len(flow_eff), 1)
+                                    if flow_eff else None),
+        },
+        "data_quality": {
+            "batch_closures": batches[:10],
+            "batch_min": args.batch_min,
+            "instant_closures": instant[:25],
+            "instant_count": len(instant),
+        },
         "risks": {
             "stale": stale, "blocked": blocked, "overdue": overdue,
-            "aging_wip": aging, "long_lived": longlived,
+            "aging_wip": aging, "long_lived": longlived, "eternal_wip": eternal,
             "aging_threshold_days": round(aging_threshold, 1),
             "stale_days": stale_days, "longlived_days": longlived_days,
         },
@@ -671,6 +823,46 @@ def build_warnings(m: dict, args: argparse.Namespace) -> list[dict]:
             f"{len(risks['long_lived'])} открытых задач старше "
             f"{risks['longlived_days']} дн. Такой хвост искажает оценки сроков.",
             risks["long_lived"][:5])
+
+    # Качество учёта: без этого метрики описывают Jira, а не работу команды.
+    dq = m.get("data_quality", {})
+    if dq.get("batch_closures"):
+        top = dq["batch_closures"][0]
+        total_batched = sum(b["count"] for b in dq["batch_closures"])
+        add("serious", "Пачковые закрытия искажают поток",
+            f"{total_batched} задач закрыты пачками (например, {top['count']} шт. "
+            f"в {top['at']}). Статусы двигают задним числом, поэтому время цикла "
+            "и пропускная способность отражают учёт, а не реальную работу. "
+            "Метрики станут честными только после того, как команда начнёт "
+            "переводить задачи вовремя.",
+            dq["batch_closures"][:5])
+    if dq.get("instant_count", 0) >= 3:
+        add("warning", "Задачи закрываются в момент создания",
+            f"{dq['instant_count']} задач созданы и закрыты в течение часа. "
+            "Скорее всего, работа шла вне Jira, а задача заведена постфактум — "
+            "такие записи занижают время цикла и делают команду быстрее, "
+            "чем она есть.", dq.get("instant_closures", [])[:8])
+
+    if risks.get("eternal_wip"):
+        add("serious", "Вечные задачи в работе",
+            f"{len(risks['eternal_wip'])} задач числятся в работе дольше "
+            f"{int(ETERNAL_WIP_DAYS)} дней. Обычно это не работа, а "
+            "контейнеры-долгожители (эпики, «разное»): они раздувают WIP и портят "
+            "CFD. Их стоит либо разбить на реальные задачи, либо закрыть.",
+            risks["eternal_wip"][:10])
+
+    wait = m.get("waiting", {})
+    eff = wait.get("flow_efficiency_pct")
+    if eff is not None and eff < 60:
+        worst = (wait.get("top_issues") or [{}])[0]
+        add("warning", "Задачи много времени просто ждут",
+            f"Эффективность потока {eff}%: остальное время задачи лежат в "
+            "статусах ожидания, а не в работе. "
+            + (f"Рекордсмен — {worst.get('key')}: "
+               f"{worst.get('waiting_share_pct')}% срока в ожидании. "
+               if worst.get("key") else "")
+            + "Ускорять тут надо не работу, а передачи и согласования.",
+            wait.get("top_issues", [])[:8])
 
     # Полнота данных — честно про ограничения расчёта.
     if scope["changelog_coverage_pct"] < 100:
@@ -982,6 +1174,10 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 details{margin-top:10px}summary{cursor:pointer;color:var(--text-secondary);font-size:12px}
 .empty{color:var(--muted);font-size:13px;margin:8px 0}
 code{background:var(--plane);padding:1px 5px;border-radius:4px;font-size:12px}
+.summary{font-size:15px;line-height:1.6;border-left:3px solid var(--s1)}
+.keys{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.w .d b{color:var(--text);font-weight:600}
+ol{margin:6px 0 0 18px;padding:0}ol li{margin:4px 0}
 .foot{color:var(--muted);font-size:12px;margin-top:34px;border-top:1px solid var(--border);
 padding-top:14px}
 """
@@ -1053,8 +1249,42 @@ def render_html(m: dict, title: str) -> str:
                    f'{people["contributors"]} участников'))
     h.append("</div>")
 
+    # Анализ ИИ — впереди всего: это интерпретация, ради которой отчёт читают.
+    ai = m.get("ai_insights") or {}
+    if ai:
+        h.append("<h2>Анализ: что происходит и что делать</h2>")
+        if ai.get("executive_summary"):
+            h.append(f'<div class="card summary">{esc(ai["executive_summary"])}'
+                     f'</div>')
+        for f in ai.get("findings", []):
+            label, cls, icon = SEV.get(f.get("severity"), ("Инфо", "info", "○"))
+            conf = {"high": "уверенно", "medium": "вероятно",
+                    "low": "гипотеза"}.get(f.get("confidence"), "")
+            h.append(f'<div class="w {cls}"><div class="t">{icon} '
+                     f'{esc(f.get("title", ""))}'
+                     f'<span class="badge">{esc(label)}</span>'
+                     + (f'<span class="badge">{esc(conf)}</span>' if conf else "")
+                     + '</div>')
+            for field, prefix in (("observation", "Что видно"),
+                                  ("interpretation", "Что это значит"),
+                                  ("recommendation", "Что делать")):
+                if f.get(field):
+                    h.append(f'<div class="d"><b>{prefix}:</b> '
+                             f'{esc(f[field])}</div>')
+            keys = f.get("evidence_keys") or []
+            if keys:
+                h.append('<div class="keys">' + " ".join(
+                    f"<code>{esc(k)}</code>" for k in keys[:12]) + "</div>")
+            h.append("</div>")
+        if ai.get("next_steps"):
+            h.append("<h3>Следующие шаги</h3><div class=\"card\"><ol>" + "".join(
+                f"<li>{esc(x)}</li>" for x in ai["next_steps"]) + "</ol></div>")
+        h.append('<p class="sub">Раздел выше — интерпретация модели по фактам '
+                 'из расчёта; каждая находка сослана на конкретные задачи. '
+                 'Ниже — числа и правила, посчитанные детерминированно.</p>')
+
     # Предупреждения
-    h.append("<h2>Выводы и предупреждения</h2>")
+    h.append("<h2>Расчётные предупреждения</h2>")
     if not m["warnings"]:
         h.append('<p class="empty">Правила не нашли отклонений.</p>')
     for w in m["warnings"]:
@@ -1145,10 +1375,53 @@ def render_html(m: dict, title: str) -> str:
              f'открытых без исполнителя: {people["unassigned_open"]}</p>')
     h.append("</div>")
 
+    # Ожидание
+    wait = m.get("waiting") or {}
+    if wait.get("by_status_days"):
+        h.append("<h2>Где время утекает</h2>")
+        h.append('<div class="card">')
+        eff = wait.get("flow_efficiency_pct")
+        if eff is not None:
+            h.append(_tile(f"{eff}%", "Эффективность потока",
+                           "доля времени в работе, а не в ожидании"))
+        rows = [{"label": x["status"], "days": x["days"]}
+                for x in wait["by_status_days"][:10] if x["days"] > 0]
+        h.append(svg_hbars(rows, [{"name": "Дней суммарно", "field": "days",
+                                   "color": "var(--s1)"}], " дн."))
+        if wait.get("top_issues"):
+            h.append("<h3>Дольше всех ждут</h3>")
+            h.append(_table(["Ключ", "Тема", "В ожидании, дн.", "Доля срока, %"],
+                            [[x["key"], x["summary"], x["waiting_days"],
+                              x["waiting_share_pct"]]
+                             for x in wait["top_issues"][:15]], {2, 3}))
+        h.append("</div>")
+
+    # Качество учёта
+    dq = m.get("data_quality") or {}
+    if dq.get("batch_closures") or dq.get("instant_count"):
+        h.append("<h2>Качество учёта</h2>")
+        h.append('<div class="card">')
+        h.append('<p class="sub" style="margin-top:0">Эти сигналы говорят не о '
+                 'команде, а о том, насколько Jira отражает реальную работу. '
+                 'Если их много, метрики времени стоит трактовать осторожно.</p>')
+        if dq.get("batch_closures"):
+            h.append("<h3>Пачковые закрытия</h3>")
+            h.append(_table(["Когда", "Закрыто за час", "Задачи"],
+                            [[b["at"], b["count"], ", ".join(b["keys"][:8])]
+                             for b in dq["batch_closures"]], {1}))
+        if dq.get("instant_closures"):
+            h.append("<h3>Закрыты в момент создания</h3>")
+            h.append(_table(["Ключ", "Тема", "Минут от создания"],
+                            [[x["key"], x["summary"], x["minutes"]]
+                             for x in dq["instant_closures"][:15]], {2}))
+        h.append("</div>")
+
     # Риски
     h.append("<h2>Риски и блокеры</h2>")
     h.append('<div class="tiles">')
     h.append(_tile(len(risks["blocked"]), "Заблокировано"))
+    h.append(_tile(len(risks.get("eternal_wip", [])), "Вечные в работе",
+                   f"дольше {int(ETERNAL_WIP_DAYS)} дн."))
     h.append(_tile(len(risks["aging_wip"]), "Зависли в работе",
                    f'дольше {risks["aging_threshold_days"]} дн.'))
     h.append(_tile(len(risks["stale"]), "Без движения",
@@ -1156,6 +1429,7 @@ def render_html(m: dict, title: str) -> str:
     h.append(_tile(len(risks["overdue"]), "Просрочено"))
     h.append("</div>")
     for key, title_, cols in (
+        ("eternal_wip", "Вечные задачи в работе", "in_progress_days"),
         ("overdue", "Просроченные", "overdue_days"),
         ("blocked", "Заблокированные", None),
         ("aging_wip", "Зависли в работе", "in_progress_days"),
@@ -1208,6 +1482,11 @@ def cmd_render(args: argparse.Namespace) -> int:
             if r and w and r >= w:
                 vals.append(days_between(w, r))
         m["_cycle_values"] = vals
+    if args.insights:
+        if not os.path.isfile(args.insights):
+            return _emit({"error": f"файл не найден: {args.insights}"}, ok=False)
+        with open(args.insights, encoding="utf-8") as fh:
+            m["ai_insights"] = json.load(fh)
     html = render_html(m, args.title)
     _atomic_write(args.out, html)
     return _emit({
@@ -1215,6 +1494,7 @@ def cmd_render(args: argparse.Namespace) -> int:
         "bytes": os.path.getsize(args.out),
         "self_contained": True,
         "warnings": len(m.get("warnings", [])),
+        "ai_findings": len((m.get("ai_insights") or {}).get("findings", [])),
     }, ok=True)
 
 
@@ -1230,8 +1510,13 @@ def cmd_demo(args: argparse.Namespace) -> int:
     types = ["Task", "Bug", "Story"]
     statuses = [("Open", TODO), ("In Progress", WIP), ("Blocked", WIP),
                 ("In Review", WIP), ("Done", DONE)]
+
     now = datetime.now(timezone.utc)
     start = now - timedelta(days=args.days)
+    # Данные намеренно «грязные», как в живой Jira: ожидания, пачковые
+    # закрытия, мгновенные закрытия и вечные эпики. Иначе детекторам качества
+    # учёта нечего ловить и их нельзя проверить.
+    batch_moments = [now - timedelta(days=d, hours=3) for d in (33, 5)]
     issues = []
     for n in range(args.count):
         created = start + timedelta(days=rnd.uniform(0, args.days * 0.92),
@@ -1243,13 +1528,33 @@ def cmd_demo(args: argparse.Namespace) -> int:
         wip_at = created + timedelta(days=rnd.uniform(0.2, 6))
         if wip_at < now:
             cl.append({"at": iso(wip_at), "from": "Open", "to": "In Progress"})
+        # Часть задач надолго уходит в ожидание уточнений.
+        wait_days = 0.0
+        if wip_at < now and rnd.random() < 0.22:
+            w0 = wip_at + timedelta(days=rnd.uniform(0.5, 3))
+            wait_days = rnd.uniform(3, 45)
+            w1 = w0 + timedelta(days=wait_days)
+            if w1 < now:
+                cl.append({"at": iso(w0), "from": "In Progress", "to": "Need Info"})
+                cl.append({"at": iso(w1), "from": "Need Info", "to": "In Progress"})
+            else:
+                wait_days = 0.0
         if closed and wip_at < now:
             dur = rnd.choice([rnd.uniform(0.5, 4), rnd.uniform(4, 12),
                               rnd.uniform(12, 40)])
-            r = wip_at + timedelta(days=dur)
-            if r < now:
+            r = wip_at + timedelta(days=dur + wait_days)
+            # Каждая пятая закрывается «пачкой» — статус двигают задним числом.
+            if rnd.random() < 0.2:
+                r = rnd.choice(batch_moments) + timedelta(minutes=rnd.uniform(0, 55))
+            if r < now and r > wip_at:
                 resolved, status, cat = r, "Done", DONE
                 cl.append({"at": iso(r), "from": "In Progress", "to": "Done"})
+        # Несколько задач заводят постфактум и закрывают сразу.
+        if not resolved and rnd.random() < 0.04:
+            r = created + timedelta(minutes=rnd.uniform(1, 40))
+            if r < now:
+                resolved, status, cat = r, "Done", DONE
+                cl = [{"at": iso(r), "from": "Open", "to": "Done"}]
         if not resolved:
             status, cat = rnd.choice(statuses[:4])
             if wip_at >= now:
@@ -1278,6 +1583,21 @@ def cmd_demo(args: argparse.Namespace) -> int:
         }
         if rnd.random() < 0.05:
             fields["customfield_10100"] = {"value": "Impediment"}
+        # Вечные эпики-контейнеры: живут в работе годами.
+        if n < 3:
+            created = now - timedelta(days=rnd.uniform(300, 600))
+            wip_at = created + timedelta(days=2)
+            resolved, status, cat = None, "In Progress", WIP
+            cl = [{"at": iso(wip_at), "from": "Open", "to": "In Progress"}]
+            fields["issuetype"] = {"name": "Epic"}
+            fields["summary"] = rnd.choice(
+                ["Расчёт эффекта (контейнер)", "A/B тесты — общее",
+                 "Ad-hoc задачи квартала"])
+            fields["created"] = created.strftime("%Y-%m-%dT%H:%M:%S.000+0000")
+            fields["resolutiondate"] = None
+            fields["status"] = {"name": status, "statusCategory": {"key": cat}}
+            fields["updated"] = (now - timedelta(days=rnd.uniform(20, 60))
+                                 ).strftime("%Y-%m-%dT%H:%M:%S.000+0000")
         issues.append({"key": f"DEMO-{n + 1}", "fields": fields,
                        "changelog": {"histories": [
                            {"created": e["at"],
@@ -1300,6 +1620,9 @@ def build_parser() -> argparse.ArgumentParser:
     n = sub.add_parser("normalize", help="сырые выгрузки → канонический issues.json")
     n.add_argument("inputs", nargs="+", help="JSON-файлы ответов Jira/MCP")
     n.add_argument("--out", required=True)
+    n.add_argument("--transitions", default=None,
+                   help="JSON с историей статусов, если MCP не отдал changelog: "
+                        "{\"KEY-1\": [{at,from,to}, ...]}")
     n.add_argument("--story-points-field", default=None,
                    help="имя customfield со story points, напр. customfield_10002")
     n.set_defaults(func=cmd_normalize)
@@ -1315,6 +1638,8 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--longlived-days", type=int, default=90)
     a.add_argument("--aging-days", type=int, default=14,
                    help="запасной порог зависания, если cycle p85 не посчитан")
+    a.add_argument("--batch-min", type=int, default=4,
+                   help="сколько закрытий в один час считать пачкой")
     a.add_argument("--wip-warn", type=int, default=3,
                    help="сколько задач в работе на человека считать перегрузом")
     a.set_defaults(func=cmd_analyze)
@@ -1325,7 +1650,22 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--issues", default=None,
                    help="issues.json — нужен для гистограммы времени цикла")
     r.add_argument("--title", default="Аналитика Jira")
+    r.add_argument("--insights", default=None,
+                   help="insights.json с выводами модели (см. brief)")
     r.set_defaults(func=cmd_render)
+
+    b = sub.add_parser("brief", help="metrics.json → выжимка фактов для модели")
+    b.add_argument("input")
+    b.add_argument("--out", required=True)
+    b.add_argument("--samples", type=int, default=12,
+                   help="сколько задач-образцов класть в каждую категорию")
+    b.set_defaults(func=cmd_brief)
+
+    v = sub.add_parser("validate-insights",
+                       help="проверить, что выводы модели опираются на реальные задачи")
+    v.add_argument("input", help="insights.json")
+    v.add_argument("--issues", required=True, help="issues.json")
+    v.set_defaults(func=cmd_validate_insights)
 
     d = sub.add_parser("demo", help="сгенерировать синтетическую выгрузку Jira")
     d.add_argument("--out", required=True)
@@ -1340,6 +1680,172 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     return args.func(args)
+
+
+
+# --- Слой ИИ-анализа ---------------------------------------------------------
+# Алгоритмы находят то, что описано порогами. Всё остальное — темы в названиях
+# задач, причины выбросов, связки «этот эпик тормозит вон те задачи» — видит
+# только модель. Чтобы её выводы были проверяемыми, а не красивым текстом,
+# конвейер разделён на три шага: brief (факты) → insights (интерпретация) →
+# validate-insights (заземление на реальные ключи задач).
+
+
+def cmd_brief(args: argparse.Namespace) -> int:
+    """Компактная выжимка фактов для модели: числа плюс образцы задач С
+    НАЗВАНИЯМИ. Названия здесь ключевые — именно по ним видны темы и
+    повторяющиеся сюжеты, которых нет ни в одной метрике."""
+    if not os.path.isfile(args.input):
+        return _emit({"error": f"файл не найден: {args.input}"}, ok=False)
+    with open(args.input, encoding="utf-8") as fh:
+        m = json.load(fh)
+    n = args.samples
+
+    flow, people, risks = m["flow"], m["people"], m["risks"]
+    wait, dq = m.get("waiting", {}), m.get("data_quality", {})
+
+    def sample(items: list[dict], fields: tuple[str, ...]) -> list[dict]:
+        return [{k: it.get(k) for k in fields if it.get(k) is not None}
+                for it in (items or [])[:n]]
+
+    half = len(flow["buckets"]) // 2
+    trend = None
+    if half >= 2:
+        trend = {"resolved_first_half": sum(flow["resolved"][:half]),
+                 "resolved_second_half": sum(flow["resolved"][half:]),
+                 "created_first_half": sum(flow["created"][:half]),
+                 "created_second_half": sum(flow["created"][half:])}
+
+    brief = {
+        "period": m["period"],
+        "scope": m["scope"],
+        "flow": {
+            "throughput_per_bucket": flow["throughput_avg"],
+            "lead_time": flow["lead_time"],
+            "cycle_time": flow["cycle_time"],
+            "trend_halves": trend,
+            "wip_over_time": flow["wip_over_time"],
+            "buckets": flow["buckets"],
+            "created": flow["created"],
+            "resolved": flow["resolved"],
+        },
+        "waiting": {
+            "flow_efficiency_pct": wait.get("flow_efficiency_pct"),
+            "by_status_days": (wait.get("by_status_days") or [])[:8],
+            "top_waiting_issues": sample(
+                wait.get("top_issues"),
+                ("key", "summary", "waiting_days", "waiting_share_pct")),
+        },
+        "people": {
+            "rows": people["rows"][:15],
+            "bus_factor": people["bus_factor"],
+            "top_share_pct": people["top_share_pct"],
+            "contributors": people["contributors"],
+            "unassigned_open": people["unassigned_open"],
+        },
+        "risks": {
+            k: sample(risks.get(k), ("key", "summary", "status", "assignee",
+                                     "in_progress_days", "days_idle",
+                                     "overdue_days", "age_days", "type"))
+            for k in ("eternal_wip", "aging_wip", "blocked", "overdue",
+                      "stale", "long_lived")
+        },
+        "data_quality": {
+            "batch_closures": (dq.get("batch_closures") or [])[:5],
+            "instant_closures": sample(dq.get("instant_closures"),
+                                       ("key", "summary", "minutes")),
+            "instant_count": dq.get("instant_count", 0),
+        },
+        "distributions": {
+            "status": m.get("status_distribution", {}),
+            "type": m.get("type_distribution", {}),
+        },
+        "computed_warnings": [{"severity": w["severity"], "title": w["title"]}
+                              for w in m.get("warnings", [])],
+        "questions_to_answer": [
+            "Какие СЮЖЕТЫ повторяются в названиях зависших и ожидающих задач? "
+            "Есть ли общая тема (компонент, заказчик, тип работы)?",
+            "Что на самом деле стоит за выбросами времени цикла — крупная "
+            "работа, ожидание согласований или задача-контейнер?",
+            "Отражают ли метрики реальную работу или практику ведения Jira? "
+            "Смотри на пачковые и мгновенные закрытия.",
+            "Что из найденного — следствие, а что причина? Какая ОДНА проблема, "
+            "если её решить, вытянет остальные?",
+            "Что именно предложить команде на ближайшей встрече — конкретное "
+            "действие, а не «улучшить процесс».",
+        ],
+        "rules_for_you": [
+            "Числа бери только из этой выжимки — не считай и не округляй заново.",
+            "Каждую находку подкрепляй ключами задач из evidence_keys.",
+            "Не повторяй computed_warnings дословно — углубляй их или "
+            "объясняй причину.",
+            "Если данных на вывод не хватает, ставь confidence=low и скажи, "
+            "чего не хватает. Молчание лучше выдумки.",
+        ],
+    }
+    _atomic_write(args.out, json.dumps(brief, ensure_ascii=False, indent=2))
+    return _emit({
+        "output": os.path.abspath(args.out),
+        "bytes": os.path.getsize(args.out),
+        "next": "прочитай выжимку, напиши insights.json по схеме из "
+                "references/ai-insights.md, затем проверь его "
+                "командой validate-insights",
+    }, ok=True)
+
+
+def cmd_validate_insights(args: argparse.Namespace) -> int:
+    """Заземление: каждая находка модели должна ссылаться на существующие
+    задачи. Так интерпретация остаётся проверяемой, а не убедительным текстом."""
+    for path in (args.input, args.issues):
+        if not os.path.isfile(path):
+            return _emit({"error": f"файл не найден: {path}"}, ok=False)
+    with open(args.input, encoding="utf-8") as fh:
+        ins = json.load(fh)
+    with open(args.issues, encoding="utf-8") as fh:
+        known = {i["key"] for i in json.load(fh) if i.get("key")}
+
+    problems: list[str] = []
+    if not isinstance(ins, dict):
+        return _emit({"error": "insights.json должен быть объектом"}, ok=False)
+    if not str(ins.get("executive_summary", "")).strip():
+        problems.append("пустой executive_summary")
+    findings = ins.get("findings") or []
+    if not findings:
+        problems.append("нет ни одной находки (findings)")
+
+    allowed_sev = {"critical", "serious", "warning", "info", "good"}
+    allowed_conf = {"high", "medium", "low"}
+    unknown_keys: list[str] = []
+    for idx, f in enumerate(findings):
+        tag = f.get("title") or f"#{idx + 1}"
+        for field in ("title", "observation", "interpretation", "recommendation"):
+            if not str(f.get(field, "")).strip():
+                problems.append(f"находка «{tag}»: пустое поле {field}")
+        if f.get("severity") not in allowed_sev:
+            problems.append(f"находка «{tag}»: severity должен быть одним из "
+                            f"{sorted(allowed_sev)}")
+        if f.get("confidence") not in allowed_conf:
+            problems.append(f"находка «{tag}»: confidence должен быть одним из "
+                            f"{sorted(allowed_conf)}")
+        keys = f.get("evidence_keys") or []
+        bad = [k for k in keys if k not in known]
+        if bad:
+            unknown_keys.extend(bad)
+            problems.append(f"находка «{tag}»: ключи задач не найдены в выборке: "
+                            f"{', '.join(bad[:5])}")
+        if not keys and f.get("confidence") == "high":
+            problems.append(f"находка «{tag}»: высокая уверенность без ссылок "
+                            "на задачи — либо добавь evidence_keys, либо снизь "
+                            "confidence")
+
+    ok = not problems
+    return _emit({
+        "findings": len(findings),
+        "unknown_keys": sorted(set(unknown_keys)),
+        "problems": problems,
+        "verdict": ("выводы заземлены на реальные задачи" if ok
+                    else "исправь замечания и проверь ещё раз"),
+    }, ok=ok)
 
 
 if __name__ == "__main__":

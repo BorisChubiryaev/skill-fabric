@@ -50,7 +50,7 @@ def jira_issue(key: str, created: datetime, *, resolved: datetime | None = None,
         "issuetype": {"name": "Task"},
         "status": {"name": status, "statusCategory": {"key": cat}},
         "assignee": {"displayName": assignee} if assignee else None,
-        "created": created.strftime("%Y-%m-%dT%H:%M:%S.000+0300"),
+        "created": created.strftime("%Y-%m-%dT%H:%M:%S.000+0000"),
         "resolutiondate": resolved.strftime("%Y-%m-%dT%H:%M:%S.000+0000") if resolved else None,
         "updated": (updated or created).strftime("%Y-%m-%dT%H:%M:%S.000+0000"),
         "duedate": duedate,
@@ -250,6 +250,158 @@ class AnalyzeTests(unittest.TestCase):
         self.assertNotIn("<script", html)
         self.assertIn("<svg", html)
         self.assertIn("Просроченные", html)
+
+
+class DetectorTests(unittest.TestCase):
+    """Детекторы, появившиеся из разбора реального прогона."""
+
+    def test_status_durations_and_waiting(self) -> None:
+        raw = jira_issue("W-1", NOW - timedelta(days=20),
+                         resolved=NOW - timedelta(days=1), status="Done",
+                         cat=m.DONE, wip_at=NOW - timedelta(days=18))
+        # Вставляем «уход в ожидание» на 10 дней.
+        raw["changelog"]["histories"].insert(1, {
+            "created": (NOW - timedelta(days=15)).strftime("%Y-%m-%dT%H:%M:%S.000+0000"),
+            "items": [{"field": "status", "fromString": "In Progress",
+                       "toString": "Need Info"}]})
+        raw["changelog"]["histories"].insert(2, {
+            "created": (NOW - timedelta(days=5)).strftime("%Y-%m-%dT%H:%M:%S.000+0000"),
+            "items": [{"field": "status", "fromString": "Need Info",
+                       "toString": "In Progress"}]})
+        n = m.normalize_issue(raw)
+        durs = m.status_durations(n, NOW)
+        self.assertIn("Need Info", durs)
+        self.assertAlmostEqual(durs["Need Info"], 10.0, delta=0.6)
+
+    def test_waiting_pattern_matches_ru_and_en(self) -> None:
+        for st in ("Need Info", "На паузе", "Ожидание ответа", "Blocked", "Pending"):
+            self.assertTrue(m.WAITING_PATTERN.search(st), st)
+        for st in ("In Progress", "Done", "Готово"):
+            self.assertFalse(m.WAITING_PATTERN.search(st), st)
+
+    def test_batch_closures_detected(self) -> None:
+        at = NOW - timedelta(days=3)
+        issues = [m.normalize_issue(jira_issue(f"B-{i}", NOW - timedelta(days=10),
+                                               resolved=at + timedelta(minutes=i),
+                                               status="Done", cat=m.DONE))
+                  for i in range(6)]
+        batches = m.detect_batch_closures(issues, min_batch=4)
+        self.assertEqual(len(batches), 1)
+        self.assertEqual(batches[0]["count"], 6)
+
+    def test_instant_closures_detected(self) -> None:
+        c = NOW - timedelta(days=2)
+        issues = [m.normalize_issue(jira_issue("I-1", c, resolved=c + timedelta(minutes=5),
+                                               status="Done", cat=m.DONE)),
+                  m.normalize_issue(jira_issue("I-2", c, resolved=c + timedelta(days=4),
+                                               status="Done", cat=m.DONE))]
+        inst = m.detect_instant_closures(issues)
+        self.assertEqual([x["key"] for x in inst], ["I-1"])
+
+    def test_transitions_file_merged_in_normalize(self) -> None:
+        tmp = tempfile.mkdtemp()
+        raw = jira_issue("T-1", NOW - timedelta(days=10),
+                         resolved=NOW - timedelta(days=2), status="Done", cat=m.DONE)
+        raw["changelog"] = {"histories": []}          # MCP не отдал историю
+        src = os.path.join(tmp, "raw.json")
+        with open(src, "w", encoding="utf-8") as fh:
+            json.dump({"issues": [raw]}, fh)
+        trans = os.path.join(tmp, "trans.json")
+        with open(trans, "w", encoding="utf-8") as fh:
+            json.dump({"T-1": [{"at": (NOW - timedelta(days=8)).isoformat(),
+                                "from": "Open", "to": "In Progress"}]}, fh)
+        rc, out = _run("normalize", src, "--transitions", trans,
+                       "--out", os.path.join(tmp, "i.json"))
+        self.assertEqual(rc, 0)
+        self.assertEqual(out["changelog_merged_from_file"], 1)
+        self.assertEqual(out["changelog_coverage_pct"], 100.0)
+
+
+class AiLayerTests(unittest.TestCase):
+    """Слой анализа: выжимка фактов и заземление выводов."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp()
+        raw = os.path.join(self.tmp, "raw.json")
+        _run("demo", "--out", raw, "--count", "60", "--days", "90")
+        self.iss = os.path.join(self.tmp, "i.json")
+        _run("normalize", raw, "--out", self.iss)
+        self.met = os.path.join(self.tmp, "m.json")
+        _run("analyze", self.iss, "--out", self.met)
+
+    def _insights(self, **over) -> str:
+        base = {
+            "executive_summary": "Сводка для руководителя.",
+            "findings": [{
+                "title": "Находка", "severity": "warning",
+                "observation": "Что видно", "interpretation": "Что значит",
+                "recommendation": "Что делать",
+                "evidence_keys": ["DEMO-1"], "confidence": "high"}],
+            "next_steps": ["Шаг"],
+        }
+        base.update(over)
+        path = os.path.join(self.tmp, f"ins{len(over)}{id(over)}.json")
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(base, fh, ensure_ascii=False)
+        return path
+
+    def test_brief_contains_titles_for_theme_finding(self) -> None:
+        out = os.path.join(self.tmp, "b.json")
+        rc, res = _run("brief", self.met, "--out", out)
+        self.assertEqual(rc, 0)
+        with open(out, encoding="utf-8") as fh:
+            b = json.load(fh)
+        for section in ("flow", "waiting", "people", "risks", "data_quality",
+                        "questions_to_answer", "rules_for_you"):
+            self.assertIn(section, b)
+        # Названия задач обязаны быть в выжимке — по ним модель ищет сюжеты.
+        sample = b["risks"]["eternal_wip"] or b["risks"]["aging_wip"]
+        if sample:
+            self.assertIn("summary", sample[0])
+
+    def test_valid_insights_pass(self) -> None:
+        rc, out = _run("validate-insights", self._insights(), "--issues", self.iss)
+        self.assertEqual(rc, 0)
+        self.assertTrue(out["ok"])
+
+    def test_fabricated_issue_key_is_rejected(self) -> None:
+        path = self._insights(findings=[{
+            "title": "Выдумка", "severity": "serious", "observation": "o",
+            "interpretation": "i", "recommendation": "r",
+            "evidence_keys": ["DEMO-999999"], "confidence": "high"}])
+        rc, out = _run("validate-insights", path, "--issues", self.iss)
+        self.assertEqual(rc, 1)
+        self.assertFalse(out["ok"])
+        self.assertIn("DEMO-999999", out["unknown_keys"])
+
+    def test_high_confidence_without_evidence_rejected(self) -> None:
+        path = self._insights(findings=[{
+            "title": "Без доказательств", "severity": "warning", "observation": "o",
+            "interpretation": "i", "recommendation": "r",
+            "evidence_keys": [], "confidence": "high"}])
+        rc, out = _run("validate-insights", path, "--issues", self.iss)
+        self.assertEqual(rc, 1)
+        self.assertTrue(any("уверенность" in p for p in out["problems"]))
+
+    def test_bad_severity_rejected(self) -> None:
+        path = self._insights(findings=[{
+            "title": "Плохой уровень", "severity": "катастрофа", "observation": "o",
+            "interpretation": "i", "recommendation": "r",
+            "evidence_keys": [], "confidence": "low"}])
+        rc, out = _run("validate-insights", path, "--issues", self.iss)
+        self.assertEqual(rc, 1)
+
+    def test_render_includes_ai_section(self) -> None:
+        html = os.path.join(self.tmp, "d.html")
+        rc, res = _run("render", self.met, "--out", html, "--issues", self.iss,
+                       "--insights", self._insights())
+        self.assertEqual(rc, 0)
+        self.assertEqual(res["ai_findings"], 1)
+        with open(html, encoding="utf-8") as fh:
+            page = fh.read()
+        self.assertIn("Анализ: что происходит и что делать", page)
+        self.assertIn("Сводка для руководителя", page)
+        self.assertNotIn("https://", page)
 
 
 class PipelineTests(unittest.TestCase):
