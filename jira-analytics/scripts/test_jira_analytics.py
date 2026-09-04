@@ -317,6 +317,92 @@ class DetectorTests(unittest.TestCase):
         self.assertEqual(out["changelog_coverage_pct"], 100.0)
 
 
+class HierarchyTests(unittest.TestCase):
+    """Эпики, задачи под ними и подзадачи."""
+
+    def _raw(self) -> dict:
+        def issue(key, typ, subtask=False, parent=None, epic=None,
+                  cat=m.TODO, status="Open", resolved=None):
+            f = {"summary": f"Тема {key}",
+                 "issuetype": {"name": typ, "subtask": subtask},
+                 "status": {"name": status, "statusCategory": {"key": cat}},
+                 "created": (NOW - timedelta(days=40)).strftime("%Y-%m-%dT%H:%M:%S.000+0000"),
+                 "updated": (NOW - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%S.000+0000")}
+            if resolved:
+                f["resolutiondate"] = resolved.strftime("%Y-%m-%dT%H:%M:%S.000+0000")
+            if parent:
+                f["parent"] = {"key": parent}
+            if epic:
+                f["customfield_10014"] = epic
+            return {"key": key, "fields": f, "changelog": {"histories": []}}
+
+        return {"issues": [
+            issue("EP-1", "Epic", cat=m.WIP, status="In Progress"),
+            issue("EP-2", "Epic", cat=m.DONE, status="Done",
+                  resolved=NOW - timedelta(days=5)),
+            issue("TS-1", "Story", epic="EP-1", cat=m.DONE, status="Done",
+                  resolved=NOW - timedelta(days=6)),
+            issue("TS-2", "Task", parent="EP-1"),
+            issue("SB-1", "Sub-task", subtask=True, parent="TS-1"),
+            issue("TS-3", "Task", epic="EP-2"),
+            issue("TS-4", "Task"),
+        ]}
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp()
+        self.raw = os.path.join(self.tmp, "raw.json")
+        with open(self.raw, "w", encoding="utf-8") as fh:
+            json.dump(self._raw(), fh, ensure_ascii=False)
+        self.iss = os.path.join(self.tmp, "i.json")
+        rc, self.norm = _run("normalize", self.raw, "--out", self.iss)
+        self.assertEqual(rc, 0, self.norm)
+
+    def test_epic_links_resolved_three_ways(self) -> None:
+        with open(self.iss, encoding="utf-8") as fh:
+            by = {i["key"]: i for i in json.load(fh)}
+        self.assertEqual(by["TS-1"]["epic_key"], "EP-1")   # Epic Link
+        self.assertEqual(by["TS-2"]["epic_key"], "EP-1")   # через parent
+        self.assertEqual(by["SB-1"]["epic_key"], "EP-1")   # подзадача наследует
+        self.assertIsNone(by["TS-4"]["epic_key"])         # вне эпиков
+        self.assertTrue(by["SB-1"]["is_subtask"])
+
+    def test_normalize_reports_hierarchy(self) -> None:
+        hi = self.norm["hierarchy"]
+        self.assertEqual(hi["epics"], 2)
+        self.assertEqual(hi["subtasks"], 1)
+        self.assertEqual(hi["orphans"], 1)
+
+    def test_epics_excluded_from_flow_by_default(self) -> None:
+        met = os.path.join(self.tmp, "m.json")
+        rc, _ = _run("analyze", self.iss, "--out", met, "--now", NOW.isoformat())
+        self.assertEqual(rc, 0)
+        with open(met, encoding="utf-8") as fh:
+            metrics = json.load(fh)
+        self.assertEqual(metrics["hierarchy"]["counted_items"], 5)   # 7 − 2 эпика
+        self.assertEqual(metrics["hierarchy"]["epics_excluded_from_flow"], 2)
+
+    def test_scope_all_includes_epics(self) -> None:
+        met = os.path.join(self.tmp, "m2.json")
+        rc, _ = _run("analyze", self.iss, "--out", met, "--now", NOW.isoformat(),
+                     "--scope-items", "all")
+        self.assertEqual(rc, 0)
+        with open(met, encoding="utf-8") as fh:
+            self.assertEqual(json.load(fh)["hierarchy"]["counted_items"], 7)
+
+    def test_epic_rollup_and_inconsistency_flag(self) -> None:
+        met = os.path.join(self.tmp, "m3.json")
+        _run("analyze", self.iss, "--out", met, "--now", NOW.isoformat())
+        with open(met, encoding="utf-8") as fh:
+            metrics = json.load(fh)
+        epics = {e["key"]: e for e in metrics["epics"]}
+        self.assertEqual(epics["EP-1"]["children"], 3)
+        self.assertEqual(epics["EP-1"]["done"], 1)
+        # E-2 закрыт, а T-3 под ним открыт — это должно быть поймано.
+        self.assertIn("эпик закрыт, но задачи открыты", epics["EP-2"]["flags"])
+        self.assertTrue(any("Эпик закрыт" in w["title"]
+                            for w in metrics["warnings"]))
+
+
 class AiLayerTests(unittest.TestCase):
     """Слой анализа: выжимка фактов и заземление выводов."""
 
@@ -408,12 +494,15 @@ class PipelineTests(unittest.TestCase):
     def test_demo_pipeline_end_to_end(self) -> None:
         tmp = tempfile.mkdtemp()
         raw = os.path.join(tmp, "raw.json")
-        rc, _ = _run("demo", "--out", raw, "--count", "60", "--days", "60")
+        rc, gen = _run("demo", "--out", raw, "--count", "60", "--days", "60")
         self.assertEqual(rc, 0)
         iss = os.path.join(tmp, "i.json")
         rc, o1 = _run("normalize", raw, "--out", iss)
         self.assertEqual(rc, 0)
-        self.assertEqual(o1["issues"], 60)
+        # demo добавляет эпики сверх --count, поэтому сверяемся с тем, что
+        # он реально сгенерировал, а не с запрошенным числом.
+        self.assertEqual(o1["issues"], gen["issues"])
+        self.assertGreaterEqual(o1["issues"], 60)
         met = os.path.join(tmp, "m.json")
         rc, o2 = _run("analyze", iss, "--out", met)
         self.assertEqual(rc, 0)

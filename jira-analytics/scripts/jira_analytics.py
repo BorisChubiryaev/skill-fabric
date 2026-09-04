@@ -172,6 +172,27 @@ def _flagged(fields: dict) -> bool:
     return False
 
 
+ISSUE_KEY_RE = re.compile(r"^[A-Z][A-Z0-9_]+-\d+$")
+
+
+def _epic_key(fields: dict, field_name: str | None) -> str | None:
+    """Ссылка на эпик. В Jira DC она живёт в customfield «Epic Link», номер
+    которого различается между инсталляциями, поэтому определяем по виду
+    значения: голая строка-ключ задачи. Явное имя поля важнее эвристики."""
+    if field_name:
+        v = fields.get(field_name)
+        if isinstance(v, str) and ISSUE_KEY_RE.match(v.strip()):
+            return v.strip()
+    epic = fields.get("epic")
+    if isinstance(epic, dict) and epic.get("key"):
+        return str(epic["key"])
+    for k, v in fields.items():
+        if k.startswith("customfield_") and isinstance(v, str) \
+                and ISSUE_KEY_RE.match(v.strip()):
+            return v.strip()
+    return None
+
+
 def _blocked_by(fields: dict) -> list[str]:
     out = []
     for link in fields.get("issuelinks") or []:
@@ -206,7 +227,8 @@ def _changelog(raw: dict) -> list[dict]:
     return events
 
 
-def normalize_issue(raw: dict, sp_field: str | None = None) -> dict:
+def normalize_issue(raw: dict, sp_field: str | None = None,
+                    epic_field: str | None = None) -> dict:
     fields = raw.get("fields") or raw
     status = fields.get("status") or {}
     cat = ((status.get("statusCategory") or {}).get("key")
@@ -226,10 +248,15 @@ def normalize_issue(raw: dict, sp_field: str | None = None) -> dict:
         return x
 
     sprints = _sprint_names(fields)
+    itype = fields.get("issuetype") or {}
+    parent = fields.get("parent") or {}
     return {
         "key": raw.get("key") or fields.get("key"),
         "summary": fields.get("summary"),
-        "type": name_of(fields.get("issuetype")) or "Unknown",
+        "type": name_of(itype) or "Unknown",
+        "is_subtask": bool(itype.get("subtask")) if isinstance(itype, dict) else False,
+        "parent": parent.get("key") if isinstance(parent, dict) else None,
+        "epic_key": _epic_key(fields, epic_field),
         "status": name_of(status) or "Unknown",
         "status_category": cat,
         "priority": name_of(fields.get("priority")),
@@ -302,7 +329,7 @@ def cmd_normalize(args: argparse.Namespace) -> int:
                     except json.JSONDecodeError:
                         pass
         for raw in _iter_raw_issues(obj):
-            norm = normalize_issue(raw, args.story_points_field)
+            norm = normalize_issue(raw, args.story_points_field, args.epic_link_field)
             if not norm["key"] or norm["key"] in seen:
                 continue
             seen.add(norm["key"])
@@ -310,6 +337,25 @@ def cmd_normalize(args: argparse.Namespace) -> int:
 
     if missing:
         return _emit({"error": "файлы не найдены: " + ", ".join(missing)}, ok=False)
+
+    # Иерархия: если Epic Link пуст, но родитель — эпик, связь берём оттуда.
+    epic_keys = {i["key"] for i in issues if (i.get("type") or "").lower() == "epic"}
+    linked_via_parent = 0
+    for issue in issues:
+        if not issue.get("epic_key") and issue.get("parent") in epic_keys:
+            issue["epic_key"] = issue["parent"]
+            linked_via_parent += 1
+    # Подзадача наследует эпик своей родительской задачи: работа по ней
+    # относится к тому же эпику, хотя Epic Link у неё обычно пуст.
+    by_key = {i["key"]: i for i in issues}
+    inherited = 0
+    for issue in issues:
+        if not issue.get("epic_key") and issue.get("parent"):
+            parent = by_key.get(issue["parent"])
+            if parent and parent.get("epic_key"):
+                issue["epic_key"] = parent["epic_key"]
+                inherited += 1
+    linked_via_parent += inherited
 
     merged_from_file = 0
     if getattr(args, "transitions", None):
@@ -337,6 +383,15 @@ def cmd_normalize(args: argparse.Namespace) -> int:
         "issues": len(issues),
         "with_changelog": with_cl,
         "changelog_merged_from_file": merged_from_file,
+        "hierarchy": {
+            "epics": len(epic_keys),
+            "subtasks": sum(1 for i in issues if i.get("is_subtask")),
+            "linked_to_epic": sum(1 for i in issues if i.get("epic_key")),
+            "linked_via_parent": linked_via_parent,
+            "orphans": sum(1 for i in issues
+                           if not i.get("epic_key")
+                           and (i.get("type") or "").lower() != "epic"),
+        },
         "changelog_coverage_pct": round(100.0 * with_cl / len(issues), 1),
         "note": ("ни у одной задачи нет changelog — время цикла посчитать не "
                  "получится; выгрузите задачи с expand=changelog" if with_cl == 0
@@ -469,6 +524,61 @@ def _is_blocked(issue: dict) -> bool:
     )
 
 
+def build_epic_rollup(all_issues: list[dict], epic_keys: set[str],
+                      now: datetime, stale_days: int) -> list[dict]:
+    """Прогресс по эпикам: сколько детей, сколько сделано, где затык.
+    Именно этот срез отвечает на вопрос руководителя «что с инициативой»,
+    которого не видно ни в одной метрике потока."""
+    by_key = {i["key"]: i for i in all_issues}
+    children: dict[str, list[dict]] = defaultdict(list)
+    for i in all_issues:
+        if i.get("epic_key"):
+            children[i["epic_key"]].append(i)
+
+    rows = []
+    for ek in sorted(set(epic_keys) | set(children)):
+        epic = by_key.get(ek)
+        kids = children.get(ek, [])
+        done = sum(1 for k in kids if k["status_category"] == DONE)
+        wip = sum(1 for k in kids if k["status_category"] == WIP)
+        todo = sum(1 for k in kids if k["status_category"] == TODO)
+        blocked = sum(1 for k in kids if _is_blocked(k))
+        last_act = max((parse_dt(k.get("updated")) for k in kids
+                        if parse_dt(k.get("updated"))), default=None)
+        if epic and parse_dt(epic.get("updated")):
+            last_act = max(last_act or parse_dt(epic["updated"]),
+                           parse_dt(epic["updated"]))
+        created = parse_dt(epic.get("created")) if epic else None
+        flags = []
+        if epic and epic["status_category"] != DONE and not kids:
+            flags.append("нет ни одной задачи")
+        if kids and done == len(kids) and epic and epic["status_category"] != DONE:
+            flags.append("все задачи сделаны, но эпик открыт")
+        if epic and epic["status_category"] == DONE and (wip + todo) > 0:
+            flags.append("эпик закрыт, но задачи открыты")
+        if kids and done == 0 and epic and epic["status_category"] == WIP:
+            flags.append("в работе, но ни одна задача не сделана")
+        if last_act and days_between(last_act, now) >= stale_days and \
+                epic and epic["status_category"] != DONE:
+            flags.append(f"без движения {int(days_between(last_act, now))} дн.")
+        rows.append({
+            "key": ek,
+            "summary": ((epic.get("summary") if epic else None)
+                        or "(эпик вне выборки)")[:120],
+            "status": epic.get("status") if epic else "—",
+            "assignee": epic.get("assignee") if epic else None,
+            "children": len(kids), "done": done, "wip": wip, "todo": todo,
+            "blocked": blocked,
+            "progress_pct": round(100.0 * done / len(kids), 1) if kids else 0.0,
+            "age_days": round(days_between(created, now), 1) if created else None,
+            "idle_days": (round(days_between(last_act, now), 1)
+                          if last_act else None),
+            "flags": flags,
+        })
+    rows.sort(key=lambda r: (-len(r["flags"]), -r["children"]))
+    return rows
+
+
 def cmd_analyze(args: argparse.Namespace) -> int:
     if not os.path.isfile(args.input):
         return _emit({"error": f"файл не найден: {args.input}"}, ok=False)
@@ -485,6 +595,15 @@ def cmd_analyze(args: argparse.Namespace) -> int:
     created_dts = [d for d in created_dts if d]
     period_from = parse_dt(args.since) or (min(created_dts) if created_dts else now)
     period_to = parse_dt(args.until) or now
+
+    all_issues = issues
+    epic_keys = {i["key"] for i in issues if (i.get("type") or "").lower() == "epic"}
+    if args.scope_items == "leaf" and epic_keys:
+        # Эпик — контейнер, а не единица работы: считать его наравне с задачами
+        # значит завышать объём и тянуть вверх хвост времени цикла.
+        issues = [i for i in issues if i["key"] not in epic_keys]
+        if not issues:
+            issues = all_issues
 
     # Карта «название статуса → категория» из наблюдаемых данных.
     status_cat: dict[str, str] = {}
@@ -669,6 +788,8 @@ def cmd_analyze(args: argparse.Namespace) -> int:
     batches = detect_batch_closures(issues, args.batch_min)
     instant = detect_instant_closures(issues)
 
+    epics = build_epic_rollup(all_issues, epic_keys, now, stale_days)
+
     metrics = {
         "generated_at": iso(now),
         "period": {"from": iso(period_from), "to": iso(period_to), "granularity": gran},
@@ -715,6 +836,17 @@ def cmd_analyze(args: argparse.Namespace) -> int:
             "aging_wip": aging, "long_lived": longlived, "eternal_wip": eternal,
             "aging_threshold_days": round(aging_threshold, 1),
             "stale_days": stale_days, "longlived_days": longlived_days,
+        },
+        "epics": epics,
+        "hierarchy": {
+            "scope_items": args.scope_items,
+            "epics_total": len(epic_keys),
+            "epics_excluded_from_flow": (len(epic_keys)
+                                         if args.scope_items == "leaf" else 0),
+            "subtasks": sum(1 for i in all_issues if i.get("is_subtask")),
+            "orphans": sum(1 for i in all_issues
+                           if not i.get("epic_key") and i["key"] not in epic_keys),
+            "counted_items": len(issues),
         },
         "status_distribution": dict(Counter(i["status"] for i in open_issues)),
         "type_distribution": dict(Counter(i["type"] for i in issues)),
@@ -823,6 +955,50 @@ def build_warnings(m: dict, args: argparse.Namespace) -> list[dict]:
             f"{len(risks['long_lived'])} открытых задач старше "
             f"{risks['longlived_days']} дн. Такой хвост искажает оценки сроков.",
             risks["long_lived"][:5])
+
+    # Иерархия: состояние инициатив и целостность связей.
+    epics = m.get("epics") or []
+    hier = m.get("hierarchy") or {}
+    empty = [e for e in epics if "нет ни одной задачи" in e["flags"]]
+    if empty:
+        add("warning", "Эпики без задач",
+            f"{len(empty)} эпиков открыты, но под ними нет ни одной задачи. "
+            "Это либо заготовки, которые забыли наполнить, либо контейнеры "
+            "«на будущее» — в обоих случаях они создают видимость работы.",
+            [{"key": e["key"], "summary": e["summary"]} for e in empty[:10]])
+    finished = [e for e in epics if "все задачи сделаны, но эпик открыт" in e["flags"]]
+    if finished:
+        add("warning", "Эпики можно закрывать",
+            f"У {len(finished)} эпиков все задачи выполнены, но сам эпик "
+            "остаётся открытым. Быстрая уборка: закрыть и убрать из отчётности.",
+            [{"key": e["key"], "summary": e["summary"],
+              "children": e["children"]} for e in finished[:10]])
+    inconsistent = [e for e in epics if "эпик закрыт, но задачи открыты" in e["flags"]]
+    if inconsistent:
+        add("serious", "Эпик закрыт, а работа под ним нет",
+            f"{len(inconsistent)} эпиков помечены выполненными, хотя под ними "
+            "остались незакрытые задачи. Либо работа потеряна из виду, либо "
+            "эпик закрыли преждевременно — отчётность по инициативам врёт.",
+            [{"key": e["key"], "summary": e["summary"],
+              "open_children": e["wip"] + e["todo"]} for e in inconsistent[:10]])
+    stuck = [e for e in epics
+             if "в работе, но ни одна задача не сделана" in e["flags"]
+             and e["children"] >= 3]
+    if stuck:
+        add("warning", "Инициативы не сдвинулись",
+            f"{len(stuck)} эпиков числятся в работе, но ни одна задача под ними "
+            "не завершена. Стоит проверить, действительно ли они начаты.",
+            [{"key": e["key"], "summary": e["summary"],
+              "children": e["children"]} for e in stuck[:10]])
+    orphans = hier.get("orphans", 0)
+    counted = hier.get("counted_items") or 1
+    if epics and orphans and orphans / counted > 0.4:
+        add("info", "Много задач вне эпиков",
+            f"{orphans} из {counted} задач не привязаны ни к одному эпику "
+            f"({round(100.0 * orphans / counted)}%). Команда использует эпики, "
+            "но значительная часть работы мимо них — по инициативам не видно "
+            "полной картины.",
+            {"orphans": orphans, "counted": counted})
 
     # Качество учёта: без этого метрики описывают Jira, а не работу команды.
     dq = m.get("data_quality", {})
@@ -1051,7 +1227,12 @@ def svg_hbars(rows: list[dict], series: list[dict], unit: str = "") -> str:
     """Горизонтальные группированные столбики — распределение по людям."""
     if not rows:
         return '<p class="empty">Нет данных</p>'
-    row_h, gap, ml, mr, mt = 30, 10, 190, 70, 8
+    # Отступ слева считаем по самой длинной подписи, иначе имена обрезаются
+    # («ИО-182» вместо «DEMO-182»). Ограничиваем сверху, чтобы график не съёжился.
+    labels = [str(r["label"]) for r in rows]
+    longest = max((len(x) for x in labels), default=10)
+    row_h, gap, mr, mt = 30, 10, 70, 8
+    ml = int(min(320, max(120, longest * 6.6 + 14)))
     h = mt + len(rows) * (row_h + gap)
     w = 860
     maxv = _nice_scale(max([r[s["field"]] for r in rows for s in series] or [0]))[0]
@@ -1061,7 +1242,7 @@ def svg_hbars(rows: list[dict], series: list[dict], unit: str = "") -> str:
     for i, r in enumerate(rows):
         y0 = mt + i * (row_h + gap)
         out.append(f'<text x="{ml - 10}" y="{y0 + row_h / 2 + 4:.1f}" '
-                   f'text-anchor="end" class="lbl">{esc(r["label"])}</text>')
+                   f'text-anchor="end" class="lbl">{esc(labels[i])}</text>')
         for j, s in enumerate(series):
             v = r[s["field"]]
             bw = (v / maxv) * plot_w if maxv else 0
@@ -1375,6 +1556,39 @@ def render_html(m: dict, title: str) -> str:
              f'открытых без исполнителя: {people["unassigned_open"]}</p>')
     h.append("</div>")
 
+    # Эпики
+    epics = m.get("epics") or []
+    hier = m.get("hierarchy") or {}
+    if epics:
+        h.append("<h2>Эпики: прогресс и затыки</h2>")
+        h.append('<div class="card">')
+        rows = [{"label": f'{e["key"]} · {e["summary"][:30]}',
+                 "done": e["done"], "left": e["wip"] + e["todo"]}
+                for e in epics[:12] if e["children"]]
+        if rows:
+            h.append(_legend([("Сделано", "var(--s3)"), ("Осталось", "var(--s2)")]))
+            h.append(svg_hbars(rows, [
+                {"name": "Сделано", "field": "done", "color": "var(--s3)"},
+                {"name": "Осталось", "field": "left", "color": "var(--s2)"}]))
+        h.append(_table(
+            ["Эпик", "Тема", "Задач", "Готово", "%", "В работе", "Блок.",
+             "Простой, дн.", "Замечания"],
+            [[e["key"], e["summary"], e["children"], e["done"], e["progress_pct"],
+              e["wip"], e["blocked"],
+              e["idle_days"] if e["idle_days"] is not None else "—",
+              "; ".join(e["flags"]) or "—"] for e in epics[:25]],
+            {2, 3, 4, 5, 6, 7}))
+        h.append(f'<p class="sub" style="margin:10px 0 0">Эпиков: '
+                 f'{hier.get("epics_total", 0)} · подзадач: '
+                 f'{hier.get("subtasks", 0)} · вне эпиков: '
+                 f'{hier.get("orphans", 0)}. '
+                 + ("Эпики исключены из метрик потока как контейнеры: они не "
+                    "единица работы и искажали бы объём и время цикла."
+                    if hier.get("scope_items") == "leaf"
+                    else "Эпики учтены в метриках потока наравне с задачами.")
+                 + "</p>")
+        h.append("</div>")
+
     # Ожидание
     wait = m.get("waiting") or {}
     if wait.get("by_status_days"):
@@ -1583,6 +1797,13 @@ def cmd_demo(args: argparse.Namespace) -> int:
         }
         if rnd.random() < 0.05:
             fields["customfield_10100"] = {"value": "Impediment"}
+        # Привязка к эпикам и подзадачи — чтобы иерархия была не пустой.
+        if 3 <= n < 120:
+            fields["customfield_10014"] = f"DEMO-{rnd.choice([1, 2, 3, 181, 182])}"
+            if rnd.random() < 0.15:
+                fields["issuetype"] = {"name": "Sub-task", "subtask": True}
+                fields["parent"] = {"key": f"DEMO-{rnd.randint(4, 100)}"}
+                fields.pop("customfield_10014", None)
         # Вечные эпики-контейнеры: живут в работе годами.
         if n < 3:
             created = now - timedelta(days=rnd.uniform(300, 600))
@@ -1603,6 +1824,24 @@ def cmd_demo(args: argparse.Namespace) -> int:
                            {"created": e["at"],
                             "items": [{"field": "status", "fromString": e["from"],
                                        "toString": e["to"]}]} for e in cl]}})
+    # Два «нормальных» эпика: один почти доделан, второй закрыт с хвостом.
+    for key, name, st, cat in (
+            ("DEMO-181", "Эпик: перевод отчётности", "In Progress", WIP),
+            ("DEMO-182", "Эпик: миграция витрин", "Done", DONE)):
+        created = now - timedelta(days=rnd.uniform(120, 200))
+        issues.append({"key": key, "fields": {
+            "summary": name,
+            "issuetype": {"name": "Epic", "subtask": False},
+            "status": {"name": st, "statusCategory": {"key": cat}},
+            "assignee": {"displayName": rnd.choice(people[:4])},
+            "created": created.strftime("%Y-%m-%dT%H:%M:%S.000+0000"),
+            "resolutiondate": ((now - timedelta(days=10)).strftime(
+                "%Y-%m-%dT%H:%M:%S.000+0000") if cat == DONE else None),
+            "updated": (now - timedelta(days=rnd.uniform(15, 50))).strftime(
+                "%Y-%m-%dT%H:%M:%S.000+0000"),
+            "labels": [], "components": [],
+        }, "changelog": {"histories": []}})
+
     payload = {"total": len(issues), "issues": issues}
     _atomic_write(args.out, json.dumps(payload, ensure_ascii=False, indent=2))
     return _emit({"output": os.path.abspath(args.out), "issues": len(issues),
@@ -1623,6 +1862,9 @@ def build_parser() -> argparse.ArgumentParser:
     n.add_argument("--transitions", default=None,
                    help="JSON с историей статусов, если MCP не отдал changelog: "
                         "{\"KEY-1\": [{at,from,to}, ...]}")
+    n.add_argument("--epic-link-field", default=None,
+                   help="имя customfield со ссылкой на эпик (Epic Link), "
+                        "напр. customfield_10014; по умолчанию определяется сам")
     n.add_argument("--story-points-field", default=None,
                    help="имя customfield со story points, напр. customfield_10002")
     n.set_defaults(func=cmd_normalize)
@@ -1638,6 +1880,9 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--longlived-days", type=int, default=90)
     a.add_argument("--aging-days", type=int, default=14,
                    help="запасной порог зависания, если cycle p85 не посчитан")
+    a.add_argument("--scope-items", choices=["leaf", "all"], default="leaf",
+                   help="leaf (по умолчанию) — не считать эпики единицами "
+                        "работы в метриках потока; all — считать всё подряд")
     a.add_argument("--batch-min", type=int, default=4,
                    help="сколько закрытий в один час считать пачкой")
     a.add_argument("--wip-warn", type=int, default=3,
@@ -1756,6 +2001,8 @@ def cmd_brief(args: argparse.Namespace) -> int:
                                        ("key", "summary", "minutes")),
             "instant_count": dq.get("instant_count", 0),
         },
+        "epics": [e for e in (m.get("epics") or []) if e["flags"] or e["children"]][:20],
+        "hierarchy": m.get("hierarchy", {}),
         "distributions": {
             "status": m.get("status_distribution", {}),
             "type": m.get("type_distribution", {}),
@@ -1765,6 +2012,8 @@ def cmd_brief(args: argparse.Namespace) -> int:
         "questions_to_answer": [
             "Какие СЮЖЕТЫ повторяются в названиях зависших и ожидающих задач? "
             "Есть ли общая тема (компонент, заказчик, тип работы)?",
+            "Что происходит с инициативами: какие эпики стоят, какие закрыты "
+            "с открытыми задачами, какая работа идёт мимо эпиков?",
             "Что на самом деле стоит за выбросами времени цикла — крупная "
             "работа, ожидание согласований или задача-контейнер?",
             "Отражают ли метрики реальную работу или практику ведения Jira? "
