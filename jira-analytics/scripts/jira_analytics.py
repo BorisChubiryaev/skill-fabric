@@ -338,7 +338,27 @@ def cmd_normalize(args: argparse.Namespace) -> int:
     if missing:
         return _emit({"error": "файлы не найдены: " + ", ".join(missing)}, ok=False)
 
-    # Иерархия: если Epic Link пуст, но родитель — эпик, связь берём оттуда.
+    linked_from_file = 0
+    if getattr(args, "epic_links", None):
+        if not os.path.isfile(args.epic_links):
+            return _emit({"error": f"файл связей не найден: {args.epic_links}"},
+                         ok=False)
+        with open(args.epic_links, encoding="utf-8") as fh:
+            raw_links = json.load(fh)
+        links: dict[str, str] = {}
+        if isinstance(raw_links, dict):
+            links = {k: v for k, v in raw_links.items() if isinstance(v, str)}
+        elif isinstance(raw_links, list):
+            for e in raw_links:
+                k, v = e.get("key"), e.get("epic") or e.get("epic_key")
+                if k and v:
+                    links[k] = v
+        for issue in issues:
+            if links.get(issue["key"]) and not issue.get("epic_key"):
+                issue["epic_key"] = links[issue["key"]]
+                linked_from_file += 1
+
+    # Иерархия: сначала связи из файла (см. выше), затем родитель и наследование.
     epic_keys = {i["key"] for i in issues if (i.get("type") or "").lower() == "epic"}
     linked_via_parent = 0
     for issue in issues:
@@ -356,6 +376,7 @@ def cmd_normalize(args: argparse.Namespace) -> int:
                 issue["epic_key"] = parent["epic_key"]
                 inherited += 1
     linked_via_parent += inherited
+
 
     merged_from_file = 0
     if getattr(args, "transitions", None):
@@ -388,6 +409,7 @@ def cmd_normalize(args: argparse.Namespace) -> int:
             "subtasks": sum(1 for i in issues if i.get("is_subtask")),
             "linked_to_epic": sum(1 for i in issues if i.get("epic_key")),
             "linked_via_parent": linked_via_parent,
+            "linked_from_file": linked_from_file,
             "orphans": sum(1 for i in issues
                            if not i.get("epic_key")
                            and (i.get("type") or "").lower() != "epic"),
@@ -426,13 +448,29 @@ def bucket_range(start: datetime, end: datetime, gran: str) -> list[str]:
     return out
 
 
-def first_wip_time(issue: dict, wip_statuses: set[str]) -> datetime | None:
-    """Момент первого перехода в работу. Без changelog определить нельзя."""
-    for ev in issue.get("changelog") or []:
+def first_wip_time(issue: dict, wip_statuses: set[str],
+                   done_statuses: set[str] | None = None
+                   ) -> tuple[datetime | None, str | None]:
+    """Момент начала работы и способ, которым он определён.
+
+    Точный путь — первый переход в статус, известный как «в работе». Но набор
+    таких статусов собирается по ТЕКУЩИМ статусам выборки, а если команда всё
+    закрыла (WIP = 0), ни одного рабочего статуса среди текущих нет — и тогда
+    время цикла молча оказывалось непосчитанным. Поэтому есть запасной путь:
+    работой считаем первый переход, который не ведёт сразу в «готово».
+    Возвращаем и способ, чтобы отчёт мог честно сказать, как это посчитано."""
+    cl = issue.get("changelog") or []
+    lower_wip = {x.lower() for x in wip_statuses}
+    for ev in cl:
         to = (ev.get("to") or "").strip()
-        if to and (to in wip_statuses or to.lower() in {s.lower() for s in wip_statuses}):
-            return parse_dt(ev["at"])
-    return None
+        if to and to.lower() in lower_wip:
+            return parse_dt(ev["at"]), "exact"
+    lower_done = {x.lower() for x in (done_statuses or set())}
+    for ev in cl:
+        to = (ev.get("to") or "").strip()
+        if to and to.lower() not in lower_done:
+            return parse_dt(ev["at"]), "fallback"
+    return None, None
 
 
 # Статусы ожидания: время в них — это не работа, а простой. Именно так
@@ -611,6 +649,9 @@ def cmd_analyze(args: argparse.Namespace) -> int:
         if i.get("status"):
             status_cat[i["status"]] = i["status_category"]
     wip_statuses = {s for s, c in status_cat.items() if c == WIP}
+    if args.wip_statuses:
+        wip_statuses |= {x.strip() for x in args.wip_statuses.split(",") if x.strip()}
+    done_statuses = {s for s, c in status_cat.items() if c == DONE}
 
     in_period = [
         i for i in issues
@@ -641,15 +682,17 @@ def cmd_analyze(args: argparse.Namespace) -> int:
 
     # --- Времена ---
     lead_times, cycle_times = [], []
+    cycle_methods: dict[str, int] = {}
     cycle_by_assignee: dict[str, list[float]] = defaultdict(list)
     for i in resolved_in_period:
         c, r = parse_dt(i["created"]), parse_dt(i["resolved"])
         if c and r and r >= c:
             lead_times.append(days_between(c, r))
-        w = first_wip_time(i, wip_statuses)
+        w, how = first_wip_time(i, wip_statuses, done_statuses)
         if w and r and r >= w:
             ct = days_between(w, r)
             cycle_times.append(ct)
+            cycle_methods[how] = cycle_methods.get(how, 0) + 1
             if i.get("assignee"):
                 cycle_by_assignee[i["assignee"]].append(ct)
 
@@ -745,7 +788,7 @@ def cmd_analyze(args: argparse.Namespace) -> int:
         if crt and days_between(crt, now) >= longlived_days:
             longlived.append(brief(i, {"age_days": round(days_between(crt, now), 1)}))
         if i["status_category"] == WIP:
-            w = first_wip_time(i, wip_statuses) or crt
+            w = first_wip_time(i, wip_statuses, done_statuses)[0] or crt
             if w:
                 age = days_between(w, now)
                 if age >= ETERNAL_WIP_DAYS:
@@ -810,6 +853,15 @@ def cmd_analyze(args: argparse.Namespace) -> int:
             "throughput_avg": round(sum(resolved_series) / len(buckets), 2) if buckets else 0,
             "lead_time": lead,
             "cycle_time": cycle,
+            "cycle_time_method": {
+                "exact": cycle_methods.get("exact", 0),
+                "fallback": cycle_methods.get("fallback", 0),
+                "note": ("начало работы определено по известным рабочим статусам"
+                         if not cycle_methods.get("fallback") else
+                         "у части задач рабочий статус неизвестен: началом "
+                         "работы считался первый переход не в «готово». "
+                         "Задайте --wip-statuses для точного расчёта"),
+            },
         },
         "people": {
             "rows": people_rows,
@@ -1688,11 +1740,12 @@ def cmd_render(args: argparse.Namespace) -> int:
         with open(args.issues, encoding="utf-8") as fh:
             issues = json.load(fh)
         status_cat = {i["status"]: i["status_category"] for i in issues if i.get("status")}
-        wip_statuses = {s for s, c in status_cat.items() if c == WIP}
+        wip_statuses = {st for st, c in status_cat.items() if c == WIP}
+        done_statuses = {st for st, c in status_cat.items() if c == DONE}
         vals = []
         for i in issues:
             r = parse_dt(i.get("resolved"))
-            w = first_wip_time(i, wip_statuses)
+            w = first_wip_time(i, wip_statuses, done_statuses)[0]
             if r and w and r >= w:
                 vals.append(days_between(w, r))
         m["_cycle_values"] = vals
@@ -1862,6 +1915,9 @@ def build_parser() -> argparse.ArgumentParser:
     n.add_argument("--transitions", default=None,
                    help="JSON с историей статусов, если MCP не отдал changelog: "
                         "{\"KEY-1\": [{at,from,to}, ...]}")
+    n.add_argument("--epic-links", default=None,
+                   help="JSON со связями задача→эпик, если их нет в полях: "
+                        "{\"ABC-2\": \"ABC-1\"}")
     n.add_argument("--epic-link-field", default=None,
                    help="имя customfield со ссылкой на эпик (Epic Link), "
                         "напр. customfield_10014; по умолчанию определяется сам")
@@ -1880,6 +1936,10 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--longlived-days", type=int, default=90)
     a.add_argument("--aging-days", type=int, default=14,
                    help="запасной порог зависания, если cycle p85 не посчитан")
+    a.add_argument("--wip-statuses", default=None,
+                   help="названия рабочих статусов через запятую, напр. "
+                        "\"В работе,На ревью\" — нужно, когда в выборке нет "
+                        "ни одной открытой задачи и определить их не по чему")
     a.add_argument("--scope-items", choices=["leaf", "all"], default="leaf",
                    help="leaf (по умолчанию) — не считать эпики единицами "
                         "работы в метриках потока; all — считать всё подряд")
@@ -1898,6 +1958,10 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--insights", default=None,
                    help="insights.json с выводами модели (см. brief)")
     r.set_defaults(func=cmd_render)
+
+    sm = sub.add_parser("summary", help="краткая сводка по metrics.json")
+    sm.add_argument("input")
+    sm.set_defaults(func=cmd_summary)
 
     b = sub.add_parser("brief", help="metrics.json → выжимка фактов для модели")
     b.add_argument("input")
@@ -1924,8 +1988,55 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    return args.func(args)
+    try:
+        return args.func(args)
+    except BrokenPipeError:
+        # Вывод оборван (например, `| head`) — это не ошибка расчёта.
+        try:
+            sys.stdout.close()
+        except Exception:
+            pass
+        return 0
 
+
+
+def cmd_summary(args: argparse.Namespace) -> int:
+    """Короткая текстовая сводка по metrics.json — чтобы посмотреть результат
+    и назвать числа в ответе, не открывая многомегабайтный JSON и не сочиняя
+    для этого одноразовый скрипт."""
+    if not os.path.isfile(args.input):
+        return _emit({"error": f"файл не найден: {args.input}"}, ok=False)
+    with open(args.input, encoding="utf-8") as fh:
+        m = json.load(fh)
+    flow, people, risks = m["flow"], m["people"], m["risks"]
+    wait, dq = m.get("waiting", {}), m.get("data_quality", {})
+    hier, epics = m.get("hierarchy", {}), m.get("epics", [])
+    cyc, lead = flow["cycle_time"], flow["lead_time"]
+    out = {
+        "период": f'{m["period"]["from"][:10]} — {m["period"]["to"][:10]}',
+        "задач_в_метриках": hier.get("counted_items", m["scope"]["total_issues"]),
+        "создано": m["scope"]["created_in_period"],
+        "закрыто": m["scope"]["resolved_in_period"],
+        "открыто_сейчас": m["scope"]["open_now"],
+        "пропускная_способность": flow["throughput_avg"],
+        "lead_time": {"p50": lead["p50"], "p85": lead["p85"], "n": lead["count"]},
+        "cycle_time": {"p50": cyc["p50"], "p85": cyc["p85"], "n": cyc["count"],
+                       "способ": flow.get("cycle_time_method", {}).get("note")},
+        "покрытие_changelog_pct": m["scope"]["changelog_coverage_pct"],
+        "эффективность_потока_pct": wait.get("flow_efficiency_pct"),
+        "bus_factor": people["bus_factor"],
+        "доля_лидера_pct": people["top_share_pct"],
+        "эпиков": hier.get("epics_total", 0),
+        "эпиков_с_замечаниями": sum(1 for e in epics if e.get("flags")),
+        "вне_эпиков": hier.get("orphans", 0),
+        "риски": {k: len(risks.get(k, [])) for k in
+                  ("eternal_wip", "aging_wip", "blocked", "overdue", "stale")},
+        "качество_учёта": {"пачковых_закрытий": len(dq.get("batch_closures", [])),
+                            "мгновенных_закрытий": dq.get("instant_count", 0)},
+        "предупреждения": [f'[{w["severity"]}] {w["title"]}'
+                           for w in m.get("warnings", [])],
+    }
+    return _emit(out, ok=True)
 
 
 # --- Слой ИИ-анализа ---------------------------------------------------------

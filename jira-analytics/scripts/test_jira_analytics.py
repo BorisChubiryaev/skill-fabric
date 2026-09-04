@@ -403,6 +403,105 @@ class HierarchyTests(unittest.TestCase):
                             for w in metrics["warnings"]))
 
 
+class CycleTimeWhenNothingOpenTests(unittest.TestCase):
+    """Регрессия из боевого прогона: все задачи закрыты, история есть,
+    а время цикла считалось по нулю задач."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp()
+        issues = []
+        for i in range(5):
+            c = NOW - timedelta(days=20 - i)
+            issues.append(jira_issue(
+                f"HQ-{i}", c, resolved=c + timedelta(days=7),
+                status="Сделан", cat=m.DONE, wip_at=c + timedelta(days=2)))
+            # Русские названия статусов в истории, как в реальной Jira.
+            issues[-1]["changelog"]["histories"][0]["items"][0].update(
+                {"fromString": "Открыт", "toString": "В работе"})
+            issues[-1]["changelog"]["histories"][1]["items"][0].update(
+                {"fromString": "В работе", "toString": "Сделан"})
+        self.raw = os.path.join(self.tmp, "raw.json")
+        with open(self.raw, "w", encoding="utf-8") as fh:
+            json.dump({"issues": issues}, fh, ensure_ascii=False)
+        self.iss = os.path.join(self.tmp, "i.json")
+        _run("normalize", self.raw, "--out", self.iss)
+
+    def _analyze(self, *extra: str) -> dict:
+        out = os.path.join(self.tmp, f"m{len(extra)}.json")
+        rc, _ = _run("analyze", self.iss, "--out", out, "--now", NOW.isoformat(),
+                     *extra)
+        self.assertEqual(rc, 0)
+        with open(out, encoding="utf-8") as fh:
+            return json.load(fh)
+
+    def test_cycle_time_computed_via_fallback(self) -> None:
+        metrics = self._analyze()
+        cyc = metrics["flow"]["cycle_time"]
+        self.assertEqual(cyc["count"], 5)
+        self.assertAlmostEqual(cyc["p50"], 5.0, delta=0.5)
+        method = metrics["flow"]["cycle_time_method"]
+        self.assertEqual(method["fallback"], 5)
+        self.assertIn("--wip-statuses", method["note"])
+
+    def test_explicit_wip_statuses_give_exact_method(self) -> None:
+        metrics = self._analyze("--wip-statuses", "В работе")
+        method = metrics["flow"]["cycle_time_method"]
+        self.assertEqual(method["exact"], 5)
+        self.assertEqual(method["fallback"], 0)
+
+
+class HelperCommandTests(unittest.TestCase):
+    """Команды, заменяющие одноразовые скрипты агента."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp()
+        raw = os.path.join(self.tmp, "raw.json")
+        _run("demo", "--out", raw, "--count", "40", "--days", "60")
+        self.iss = os.path.join(self.tmp, "i.json")
+        _run("normalize", raw, "--out", self.iss)
+        self.met = os.path.join(self.tmp, "m.json")
+        _run("analyze", self.iss, "--out", self.met)
+
+    def test_summary_reports_key_numbers(self) -> None:
+        rc, out = _run("summary", self.met)
+        self.assertEqual(rc, 0)
+        for field in ("период", "cycle_time", "bus_factor", "эпиков",
+                      "покрытие_changelog_pct", "предупреждения"):
+            self.assertIn(field, out)
+
+    def test_epic_links_from_file_reach_subtasks(self) -> None:
+        raw = {"issues": [
+            {"key": "AB-1", "fields": {"summary": "Эпик",
+             "issuetype": {"name": "Epic", "subtask": False},
+             "status": {"name": "Open", "statusCategory": {"key": "new"}},
+             "created": "2026-01-01T10:00:00.000+0000",
+             "updated": "2026-01-01T10:00:00.000+0000"}},
+            {"key": "AB-2", "fields": {"summary": "Задача",
+             "issuetype": {"name": "Task", "subtask": False},
+             "status": {"name": "Open", "statusCategory": {"key": "new"}},
+             "created": "2026-01-02T10:00:00.000+0000",
+             "updated": "2026-01-02T10:00:00.000+0000"}},
+            {"key": "AB-3", "fields": {"summary": "Подзадача",
+             "issuetype": {"name": "Sub-task", "subtask": True},
+             "parent": {"key": "AB-2"},
+             "status": {"name": "Open", "statusCategory": {"key": "new"}},
+             "created": "2026-01-03T10:00:00.000+0000",
+             "updated": "2026-01-03T10:00:00.000+0000"}}]}
+        rp = os.path.join(self.tmp, "el.json")
+        with open(rp, "w", encoding="utf-8") as fh:
+            json.dump(raw, fh, ensure_ascii=False)
+        lp = os.path.join(self.tmp, "links.json")
+        with open(lp, "w", encoding="utf-8") as fh:
+            json.dump({"AB-2": "AB-1"}, fh)
+        op = os.path.join(self.tmp, "eli.json")
+        rc, out = _run("normalize", rp, "--epic-links", lp, "--out", op)
+        self.assertEqual(rc, 0)
+        self.assertEqual(out["hierarchy"]["linked_from_file"], 1)
+        with open(op, encoding="utf-8") as fh:
+            by = {i["key"]: i for i in json.load(fh)}
+        self.assertEqual(by["AB-3"]["epic_key"], "AB-1")  # дотянулось до подзадачи
+
+
 class AiLayerTests(unittest.TestCase):
     """Слой анализа: выжимка фактов и заземление выводов."""
 
