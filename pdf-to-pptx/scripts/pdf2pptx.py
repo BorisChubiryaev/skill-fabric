@@ -34,7 +34,7 @@ from pptx import Presentation
 from pptx.util import Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import MSO_AUTO_SIZE, PP_ALIGN
-from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx.enum.shapes import MSO_SHAPE_TYPE, MSO_SHAPE
 from pptx.oxml.ns import qn
 
 
@@ -251,6 +251,13 @@ def cmd_analyze(args: argparse.Namespace) -> int:
         )
     mode = "image" if scanned_pages == len(pages_info) and pages_info else "hybrid"
     recommendations.append(f"рекомендуемый режим: {mode}")
+    vector_pages = sum(1 for p in pages_info if p["has_vector"])
+    if vector_pages and mode != "image":
+        recommendations.append(
+            f"{vector_pages} стр. с векторной графикой: режим vector переносит её "
+            "как редактируемые фигуры (полностью редактируемый PPTX), hybrid — как "
+            "точную растровую подложку."
+        )
 
     return _emit({
         "input": os.path.abspath(args.input),
@@ -373,6 +380,133 @@ def _add_image(slide, im: ImageBox) -> bool:
         return False
 
 
+# --- Вектор → нативные фигуры PPTX (режим vector) -----------------------------
+
+# 1 pt = 12700 EMU. build_freeform принимает локальные координаты и множитель;
+# передаём координаты в пунктах и масштаб 12700, получая EMU напрямую.
+_EMU_PER_PT = 12700
+
+
+def _float_color_to_rgb(seq: Any) -> RGBColor | None:
+    """Цвет PyMuPDF (кортеж 0..1, серый или RGB) в RGBColor."""
+    if seq is None:
+        return None
+    try:
+        vals = list(seq)
+    except TypeError:
+        return None
+    if len(vals) == 1:
+        vals = vals * 3
+    if len(vals) < 3:
+        return None
+    return RGBColor(*(max(0, min(255, round(c * 255))) for c in vals[:3]))
+
+
+def _flatten_cubic(p0, p1, p2, p3, steps: int = 8) -> list[tuple[float, float]]:
+    """Кубическая кривая Безье → ломаная (точки после стартовой)."""
+    out: list[tuple[float, float]] = []
+    for i in range(1, steps + 1):
+        t = i / steps
+        mt = 1.0 - t
+        a, b, c, d = mt * mt * mt, 3 * mt * mt * t, 3 * mt * t * t, t * t * t
+        out.append((
+            a * p0.x + b * p1.x + c * p2.x + d * p3.x,
+            a * p0.y + b * p1.y + c * p2.y + d * p3.y,
+        ))
+    return out
+
+
+def _subpaths_from_items(items: list) -> list[list[tuple[float, float]]]:
+    """Элементы рисунка PyMuPDF → список ломаных (подпутей) в пунктах.
+    Прямоугольники и квадраты возвращаются здесь как замкнутые ломаные."""
+    subpaths: list[list[tuple[float, float]]] = []
+    current: list[tuple[float, float]] = []
+
+    def flush() -> None:
+        nonlocal current
+        if len(current) >= 2:
+            subpaths.append(current)
+        current = []
+
+    for it in items:
+        op = it[0]
+        if op == "l":
+            p1, p2 = it[1], it[2]
+            if not current:
+                current.append((p1.x, p1.y))
+            current.append((p2.x, p2.y))
+        elif op == "c":
+            p1, p2, p3, p4 = it[1], it[2], it[3], it[4]
+            if not current:
+                current.append((p1.x, p1.y))
+            current.extend(_flatten_cubic(p1, p2, p3, p4))
+        elif op == "re":
+            flush()
+            r = it[1]
+            subpaths.append([
+                (r.x0, r.y0), (r.x1, r.y0), (r.x1, r.y1), (r.x0, r.y1), (r.x0, r.y0),
+            ])
+        elif op == "qu":
+            flush()
+            q = it[1]
+            subpaths.append([
+                (q.ul.x, q.ul.y), (q.ur.x, q.ur.y),
+                (q.lr.x, q.lr.y), (q.ll.x, q.ll.y), (q.ul.x, q.ul.y),
+            ])
+    flush()
+    return subpaths
+
+
+def _style_shape(shape, fill_rgb: RGBColor | None, line_rgb: RGBColor | None,
+                 width_pt: float) -> None:
+    if fill_rgb is not None:
+        shape.fill.solid()
+        shape.fill.fore_color.rgb = fill_rgb
+    else:
+        shape.fill.background()
+    if line_rgb is not None:
+        shape.line.color.rgb = line_rgb
+        shape.line.width = Pt(max(width_pt or 0.5, 0.25))
+    else:
+        shape.line.fill.background()
+
+
+def _add_vector_drawings(slide, drawings: list, opacity_lost: list[bool]) -> int:
+    """Векторные пути PDF → редактируемые фигуры PPTX. Возвращает число фигур."""
+    count = 0
+    for dr in drawings:
+        fill_rgb = _float_color_to_rgb(dr.get("fill"))
+        line_rgb = _float_color_to_rgb(dr.get("color"))
+        if fill_rgb is None and line_rgb is None:
+            continue
+        width_pt = float(dr.get("width") or 0.0)
+        if (dr.get("fill_opacity") not in (None, 1)) or \
+           (dr.get("stroke_opacity") not in (None, 1)):
+            opacity_lost.append(True)
+        for pts in _subpaths_from_items(dr.get("items", [])):
+            closed = fill_rgb is not None or pts[0] == pts[-1]
+            shape = _build_freeform_shape(slide, pts, closed)
+            if shape is None:
+                continue
+            _style_shape(shape, fill_rgb, line_rgb, width_pt)
+            count += 1
+    return count
+
+
+def _build_freeform_shape(slide, pts: list[tuple[float, float]], closed: bool):
+    if len(pts) < 2:
+        return None
+    verts = pts[:-1] if closed and pts[0] == pts[-1] else pts
+    if len(verts) < 2:
+        return None
+    try:
+        fb = slide.shapes.build_freeform(verts[0][0], verts[0][1], scale=_EMU_PER_PT)
+        fb.add_line_segments(verts[1:], close=closed)
+        return fb.convert_to_shape()
+    except Exception:
+        return None
+
+
 def cmd_convert(args: argparse.Namespace) -> int:
     if not os.path.isfile(args.input):
         return _emit({"error": f"файл не найден: {args.input}"}, ok=False)
@@ -396,9 +530,11 @@ def cmd_convert(args: argparse.Namespace) -> int:
     stats = {
         "pages": 0, "slides": 0, "text_lines": 0, "text_chars": 0,
         "images_placed": 0, "images_failed": 0, "backgrounds": 0,
+        "vector_shapes": 0,
     }
     limitations: list[str] = []
     per_page: list[dict[str, Any]] = []
+    opacity_lost: list[bool] = []
 
     with doc:
         for i in range(doc.page_count):
@@ -444,27 +580,36 @@ def cmd_convert(args: argparse.Namespace) -> int:
                 except Exception as exc:  # noqa: BLE001
                     limitations.append(f"стр. {i}: не удалось отрисовать подложку: {exc}")
 
-            if mode in ("text", "hybrid") and not scaled:
+            if mode in ("text", "hybrid", "vector") and not scaled:
+                # Порядок z: сначала векторы (фон/декор), затем картинки, сверху текст.
+                if mode == "vector":
+                    try:
+                        n = _add_vector_drawings(slide, page.get_drawings(), opacity_lost)
+                        stats["vector_shapes"] += n
+                        page_stat["vectors"] = n
+                    except Exception as exc:  # noqa: BLE001
+                        limitations.append(f"стр. {i}: не удалось перенести векторы: {exc}")
+                if mode in ("text", "vector"):
+                    for im in pm.images:
+                        if _add_image(slide, im):
+                            stats["images_placed"] += 1
+                        else:
+                            stats["images_failed"] += 1
                 if pm.char_count == 0:
                     page_stat["note"] = "нет текстового слоя (скан?)"
                 for ln in pm.lines:
                     _add_line_textbox(slide, ln)
                     stats["text_lines"] += 1
                     stats["text_chars"] += sum(len(r.text) for r in ln.runs)
-                if mode == "text":
-                    for im in pm.images:
-                        if _add_image(slide, im):
-                            stats["images_placed"] += 1
-                        else:
-                            stats["images_failed"] += 1
-                    if pm.has_vector:
-                        page_stat["note_vector"] = (
-                            "есть векторная графика — в режиме text она не переносится; "
-                            "используйте hybrid"
-                        )
-            elif mode in ("text", "hybrid") and scaled:
+                if mode == "text" and pm.has_vector:
+                    page_stat["note_vector"] = (
+                        "есть векторная графика — в режиме text она не переносится; "
+                        "используйте vector (редактируемые фигуры) или hybrid (подложка)"
+                    )
+            elif mode in ("text", "hybrid", "vector") and scaled:
                 page_stat["note"] = (
-                    "размер страницы отличается — текст не наложен, оставлена подложка"
+                    "размер страницы отличается — содержимое не наложено, "
+                    + ("оставлена подложка" if mode == "hybrid" else "слайд пуст")
                 )
 
             for w in pm.warnings:
@@ -481,6 +626,13 @@ def cmd_convert(args: argparse.Namespace) -> int:
     if mode == "image":
         limitations.append("режим image: слайды — это картинки, ничего не "
                             "редактируется (максимальная точность)")
+    if mode == "vector":
+        limitations.append("режим vector: векторы перенесены как редактируемые "
+                            "фигуры; кривые Безье аппроксимированы ломаными, "
+                            "градиенты/обрезка/паттерны сведены к сплошной заливке")
+        if opacity_lost:
+            limitations.append("часть фигур имела прозрачность (opacity < 1) — "
+                               "перенесена как непрозрачная")
 
     # Публикация через временный файл, чтобы не оставить полурезультат.
     out_dir = os.path.dirname(os.path.abspath(out)) or "."
@@ -525,6 +677,7 @@ def _write_report(path, inp, out, mode, dpi, stats, per_page, limitations) -> No
     lines.append(f"- Текстовых строк: {stats['text_lines']} ({stats['text_chars']} симв.)")
     lines.append(f"- Картинок размещено: {stats['images_placed']} "
                  f"(ошибок: {stats['images_failed']})")
+    lines.append(f"- Векторных фигур: {stats.get('vector_shapes', 0)}")
     lines.append(f"- Растровых подложек: {stats['backgrounds']}\n")
     if limitations:
         lines.append("## Ограничения и потери качества\n")
@@ -532,20 +685,20 @@ def _write_report(path, inp, out, mode, dpi, stats, per_page, limitations) -> No
             lines.append(f"- {lim}")
         lines.append("")
     lines.append("## По страницам\n")
-    lines.append("| # | Символов | Строк | Картинок | Примечание |")
-    lines.append("|---|---|---|---|---|")
+    lines.append("| # | Символов | Строк | Картинок | Векторов | Примечание |")
+    lines.append("|---|---|---|---|---|---|")
     for p in per_page:
         note = p.get("note", "") or p.get("note_vector", "")
         if p.get("warnings"):
             note = (note + "; " if note else "") + "; ".join(p["warnings"])
         lines.append(f"| {p['index']} | {p.get('chars',0)} | {p.get('lines',0)} "
-                     f"| {p.get('images',0)} | {note} |")
+                     f"| {p.get('images',0)} | {p.get('vectors',0)} | {note} |")
     lines.append("")
     lines.append("## Как проверить результат\n")
     lines.append("1. Откройте PPTX в PowerPoint / LibreOffice Impress / Google Slides.")
     lines.append("2. Сверьте вёрстку с исходным PDF постранично.")
-    lines.append("3. В режимах text/hybrid текст правится напрямую; в hybrid графика — "
-                 "это фоновая картинка.\n")
+    lines.append("3. text/hybrid/vector: текст правится напрямую. В hybrid графика — "
+                 "фоновая картинка; в vector графика — редактируемые фигуры.\n")
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as fh:
         fh.write("\n".join(lines))
@@ -611,7 +764,8 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("input")
     c.add_argument("--out", required=True, help="путь к результату .pptx")
     c.add_argument("--report", default=None, help="путь к Markdown-отчёту")
-    c.add_argument("--mode", choices=["text", "hybrid", "image"], default="hybrid")
+    c.add_argument("--mode", choices=["text", "hybrid", "image", "vector"],
+                   default="hybrid")
     c.add_argument("--dpi", type=int, default=150, help="разрешение растровой подложки")
     c.set_defaults(func=cmd_convert)
 

@@ -97,6 +97,27 @@ class ToolTests(unittest.TestCase):
         self.assertEqual(out["stats"]["backgrounds"], 0)
         self.assertGreater(out["stats"]["text_chars"], 0)
 
+    def test_convert_vector_mode_keeps_text_and_editable_shapes(self) -> None:
+        out_pptx = os.path.join(self.tmp, "vec.pptx")
+        rc, out = _run("convert", self.pdf, "--out", out_pptx, "--mode", "vector")
+        self.assertEqual(rc, 0)
+        # Никакой растровой подложки: графика — редактируемые фигуры.
+        self.assertEqual(out["stats"]["backgrounds"], 0)
+        self.assertGreater(out["stats"]["vector_shapes"], 0)
+        self.assertGreater(out["stats"]["text_chars"], 0)
+        # В PPTX не должно быть картинок, но должны быть фигуры-фриформы.
+        from pptx.enum.shapes import MSO_SHAPE_TYPE
+        prs = Presentation(out_pptx)
+        pictures = freeforms = 0
+        for slide in prs.slides:
+            for shape in slide.shapes:
+                if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
+                    pictures += 1
+                if shape.shape_type == MSO_SHAPE_TYPE.FREEFORM:
+                    freeforms += 1
+        self.assertEqual(pictures, 0)
+        self.assertGreater(freeforms, 0)
+
     def test_convert_image_mode_has_no_text(self) -> None:
         out_pptx = os.path.join(self.tmp, "i.pptx")
         rc, out = _run("convert", self.pdf, "--out", out_pptx, "--mode", "image")
@@ -137,6 +158,19 @@ class ToolTests(unittest.TestCase):
         self.assertEqual((rgb[0], rgb[1], rgb[2]), (0x00, 0x33, 0xAA))
         self.assertIsNone(m._int_color_to_rgb(None))
         self.assertEqual(m._clean_font_name("ABCDEF+Arial-BoldMT"), "Arial")
+
+    def test_float_color_and_bezier_helpers(self) -> None:
+        import pdf2pptx as m
+        rgb = m._float_color_to_rgb((1.0, 0.0, 0.5))
+        self.assertEqual((rgb[0], rgb[1], rgb[2]), (0xFF, 0x00, 0x80))
+        # Одноканальный (серый) цвет разворачивается в RGB.
+        grey = m._float_color_to_rgb((0.5,))
+        self.assertEqual((grey[0], grey[1], grey[2]), (0x80, 0x80, 0x80))
+        self.assertIsNone(m._float_color_to_rgb(None))
+        p = fitz.Point
+        flat = m._flatten_cubic(p(0, 0), p(0, 10), p(10, 10), p(10, 0), steps=4)
+        self.assertEqual(len(flat), 4)
+        self.assertEqual(flat[-1], (10.0, 0.0))
 
 
 if __name__ == "__main__":
