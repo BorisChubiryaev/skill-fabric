@@ -98,6 +98,16 @@ class LineBox:
 
 
 @dataclass
+class TextBlock:
+    """Блок текста PDF (абзац/колонка): bbox + строки в порядке чтения."""
+    x0: float
+    y0: float
+    x1: float
+    y1: float
+    lines: list["LineBox"] = field(default_factory=list)
+
+
+@dataclass
 class ImageBox:
     x0: float
     y0: float
@@ -114,6 +124,7 @@ class PageModel:
     height: float
     rotation: int
     lines: list[LineBox]
+    blocks: list[TextBlock]
     images: list[ImageBox]
     has_vector: bool
     warnings: list[str]
@@ -133,6 +144,7 @@ def _extract_page(page: "fitz.Page", idx: int) -> PageModel:
         )
 
     lines: list[LineBox] = []
+    blocks: list[TextBlock] = []
     images: list[ImageBox] = []
     data = page.get_text("dict")
     for block in data.get("blocks", []):
@@ -148,6 +160,7 @@ def _extract_page(page: "fitz.Page", idx: int) -> PageModel:
                     )
                 )
             continue
+        block_lines: list[LineBox] = []
         for line in block.get("lines", []):
             runs: list[SpanRun] = []
             xs0 = ys0 = 1e18
@@ -175,7 +188,15 @@ def _extract_page(page: "fitz.Page", idx: int) -> PageModel:
                     )
                 )
             if runs:
-                lines.append(LineBox(xs0, ys0, xs1, ys1, runs))
+                lb = LineBox(xs0, ys0, xs1, ys1, runs)
+                lines.append(lb)
+                block_lines.append(lb)
+        if block_lines:
+            bb = block.get("bbox") or (
+                min(l.x0 for l in block_lines), min(l.y0 for l in block_lines),
+                max(l.x1 for l in block_lines), max(l.y1 for l in block_lines),
+            )
+            blocks.append(TextBlock(bb[0], bb[1], bb[2], bb[3], block_lines))
 
     has_vector = False
     try:
@@ -190,6 +211,7 @@ def _extract_page(page: "fitz.Page", idx: int) -> PageModel:
         height=float(rect.height),
         rotation=rotation,
         lines=lines,
+        blocks=blocks,
         images=images,
         has_vector=has_vector,
         warnings=warnings,
@@ -331,26 +353,87 @@ def _add_line_textbox(slide, ln: LineBox) -> None:
     tf.margin_bottom = 0
     para = tf.paragraphs[0]
     para.alignment = PP_ALIGN.LEFT
-    first = True
     for r in ln.runs:
-        run = para.add_run()
-        run.text = r.text
-        f = run.font
-        f.size = Pt(max(r.size, 1.0))
-        f.bold = r.bold
-        f.italic = r.italic
-        if r.font:
-            f.name = _clean_font_name(r.font)
-        rgb = _int_color_to_rgb(r.color)
-        if rgb is not None:
-            f.color.rgb = rgb
-        first = False
+        _apply_run(para.add_run(), r)
     # Прижать текст к верху блока, чтобы вертикально совпадал с оригиналом.
     try:
         from pptx.enum.text import MSO_ANCHOR
         tf.vertical_anchor = MSO_ANCHOR.TOP
     except Exception:
         pass
+
+
+def _apply_run(run, r: SpanRun) -> None:
+    run.text = r.text
+    f = run.font
+    f.size = Pt(max(r.size, 1.0))
+    f.bold = r.bold
+    f.italic = r.italic
+    if r.font:
+        f.name = _clean_font_name(r.font)
+    rgb = _int_color_to_rgb(r.color)
+    if rgb is not None:
+        f.color.rgb = rgb
+
+
+def _add_block_textbox(slide, blk: TextBlock) -> None:
+    """Один текстовый фрейм на блок PDF: строки → абзацы. Сохраняет структуру
+    (абзац/колонка = редактируемый блок) и расположение через точные отступы."""
+    width = max(blk.x1 - blk.x0, 1.0)
+    height = max(blk.y1 - blk.y0, 1.0)
+    box = slide.shapes.add_textbox(Pt(blk.x0), Pt(blk.y0), Pt(width), Pt(height))
+    tf = box.text_frame
+    tf.word_wrap = True
+    try:
+        tf.auto_size = MSO_AUTO_SIZE.NONE
+    except Exception:
+        pass
+    tf.margin_left = 0
+    tf.margin_right = 0
+    tf.margin_top = 0
+    tf.margin_bottom = 0
+    try:
+        from pptx.enum.text import MSO_ANCHOR
+        tf.vertical_anchor = MSO_ANCHOR.TOP
+    except Exception:
+        pass
+    prev_y1: float | None = None
+    for i, ln in enumerate(blk.lines):
+        para = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        para.alignment = PP_ALIGN.LEFT
+        # Высота строки = высота глифов; межстрочный интервал задаём в пунктах,
+        # чтобы вертикальный ритм совпадал с PDF, а не с дефолтом PowerPoint.
+        line_h = max(ln.y1 - ln.y0, 1.0)
+        try:
+            para.line_spacing = Pt(line_h)
+        except Exception:
+            pass
+        try:
+            para.space_after = Pt(0)
+            gap = (ln.y0 - prev_y1) if prev_y1 is not None else 0.0
+            para.space_before = Pt(max(gap, 0.0))
+        except Exception:
+            pass
+        for r in ln.runs:
+            _apply_run(para.add_run(), r)
+        prev_y1 = ln.y1
+
+
+def _place_text(slide, pm: PageModel, layout: str, stats: dict) -> None:
+    """Разместить текст страницы. layout=line — отдельный бокс на строку (точное
+    наложение); layout=block — фрейм на блок PDF (структура + расположение)."""
+    if layout == "block":
+        for blk in pm.blocks:
+            _add_block_textbox(slide, blk)
+            stats["text_lines"] += len(blk.lines)
+            stats["text_chars"] += sum(
+                len(r.text) for ln in blk.lines for r in ln.runs
+            )
+    else:
+        for ln in pm.lines:
+            _add_line_textbox(slide, ln)
+            stats["text_lines"] += 1
+            stats["text_chars"] += sum(len(r.text) for r in ln.runs)
 
 
 def _clean_font_name(font: str) -> str:
@@ -597,10 +680,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
                             stats["images_failed"] += 1
                 if pm.char_count == 0:
                     page_stat["note"] = "нет текстового слоя (скан?)"
-                for ln in pm.lines:
-                    _add_line_textbox(slide, ln)
-                    stats["text_lines"] += 1
-                    stats["text_chars"] += sum(len(r.text) for r in ln.runs)
+                _place_text(slide, pm, args.text_layout, stats)
                 if mode == "text" and pm.has_vector:
                     page_stat["note_vector"] = (
                         "есть векторная графика — в режиме text она не переносится; "
@@ -633,6 +713,10 @@ def cmd_convert(args: argparse.Namespace) -> int:
         if opacity_lost:
             limitations.append("часть фигур имела прозрачность (opacity < 1) — "
                                "перенесена как непрозрачная")
+    if args.text_layout == "block" and mode != "image":
+        limitations.append("раскладка block: текст сгруппирован в блоки PDF "
+                            "(абзацы/колонки как редактируемые фреймы); "
+                            "вертикальные отступы внутри блока аппроксимированы")
 
     # Публикация через временный файл, чтобы не оставить полурезультат.
     out_dir = os.path.dirname(os.path.abspath(out)) or "."
@@ -651,7 +735,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
     report_path = args.report
     if report_path:
         _write_report(report_path, args.input, out, mode, dpi, stats,
-                      per_page, limitations)
+                      per_page, limitations, args.text_layout)
 
     ok = stats["slides"] > 0
     return _emit({
@@ -659,6 +743,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
         "output": os.path.abspath(out),
         "report": os.path.abspath(report_path) if report_path else None,
         "mode": mode,
+        "text_layout": args.text_layout,
         "dpi": dpi,
         "stats": stats,
         "limitations": limitations,
@@ -666,12 +751,14 @@ def cmd_convert(args: argparse.Namespace) -> int:
     }, ok=ok)
 
 
-def _write_report(path, inp, out, mode, dpi, stats, per_page, limitations) -> None:
+def _write_report(path, inp, out, mode, dpi, stats, per_page, limitations,
+                  text_layout="line") -> None:
     lines = []
     lines.append(f"# Отчёт конвертации PDF → PPTX\n")
     lines.append(f"- **Вход:** `{os.path.abspath(inp)}`")
     lines.append(f"- **Результат:** `{os.path.abspath(out)}`")
-    lines.append(f"- **Режим:** `{mode}`  •  **DPI подложки:** {dpi}\n")
+    lines.append(f"- **Режим:** `{mode}`  •  **Раскладка текста:** `{text_layout}`"
+                 f"  •  **DPI подложки:** {dpi}\n")
     lines.append("## Сводка\n")
     lines.append(f"- Слайдов: {stats['slides']}")
     lines.append(f"- Текстовых строк: {stats['text_lines']} ({stats['text_chars']} симв.)")
@@ -766,6 +853,10 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--report", default=None, help="путь к Markdown-отчёту")
     c.add_argument("--mode", choices=["text", "hybrid", "image", "vector"],
                    default="hybrid")
+    c.add_argument("--text-layout", dest="text_layout",
+                   choices=["line", "block"], default="line",
+                   help="line — бокс на строку (точное наложение); "
+                        "block — фрейм на блок PDF (структура абзацев/колонок)")
     c.add_argument("--dpi", type=int, default=150, help="разрешение растровой подложки")
     c.set_defaults(func=cmd_convert)
 

@@ -118,6 +118,43 @@ class ToolTests(unittest.TestCase):
         self.assertEqual(pictures, 0)
         self.assertGreater(freeforms, 0)
 
+    def test_text_layout_block_groups_lines_into_fewer_frames(self) -> None:
+        # Страница с многострочным абзацем: block должен дать меньше текстовых
+        # фреймов, чем строк (строки сгруппированы в блоки-абзацы).
+        pdf = os.path.join(self.tmp, "para.pdf")
+        doc = fitz.open()
+        page = doc.new_page(width=400, height=300)
+        page.insert_textbox(
+            fitz.Rect(30, 40, 370, 160),
+            "Первая строка абзаца тянется дальше и переносится на несколько "
+            "строк подряд внутри одного блока текста для проверки группировки.",
+            fontsize=12,
+        )
+        doc.save(pdf)
+        doc.close()
+
+        def _text_frames(path: str) -> int:
+            prs = Presentation(path)
+            return sum(
+                1 for s in prs.slides for sh in s.shapes if sh.has_text_frame
+            )
+
+        line_out = os.path.join(self.tmp, "line.pptx")
+        block_out = os.path.join(self.tmp, "block.pptx")
+        rc1, o1 = _run("convert", pdf, "--out", line_out,
+                       "--mode", "text", "--text-layout", "line")
+        rc2, o2 = _run("convert", pdf, "--out", block_out,
+                       "--mode", "text", "--text-layout", "block")
+        self.assertEqual(rc1, 0)
+        self.assertEqual(rc2, 0)
+        self.assertEqual(o2["text_layout"], "block")
+        line_frames = _text_frames(line_out)
+        block_frames = _text_frames(block_out)
+        self.assertGreater(line_frames, block_frames)
+        self.assertEqual(block_frames, 1)
+        # Текст сохранён целиком в обоих раскладках.
+        self.assertEqual(o1["stats"]["text_chars"], o2["stats"]["text_chars"])
+
     def test_convert_image_mode_has_no_text(self) -> None:
         out_pptx = os.path.join(self.tmp, "i.pptx")
         rc, out = _run("convert", self.pdf, "--out", out_pptx, "--mode", "image")
